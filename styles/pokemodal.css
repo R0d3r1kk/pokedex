@@ -1,0 +1,23 @@
+
+.modal-header{
+    color: white;
+    background-color: #212529 !important;
+    border: none !important;
+}
+.modal-header button:hover{
+    background-color: #f4001f;
+    border: none;
+}
+.modal-body{
+    color: white;
+    background-color: #212529 !important;
+}
+.modal-footer{
+    color: white;
+    background-color: #212529 !important;
+    border: none !important;
+}
+.modal-footer button{
+    background-color: #f4001f;
+    border: none;
+}
