@@ -23,7 +23,6 @@ const PokeCard = ({ pokemon }) => {
     <>
       <Card
         key={id}
-        bg="dark"
         className={"pokecard " + cardFormat?.style?.className || ""}
         onClick={() => setModalShow(true)}
       >
@@ -45,21 +44,21 @@ const PokeCard = ({ pokemon }) => {
         </div>
         <Card.Body>
           <Card.Title></Card.Title>
-          <Card.Subtitle className="mb-2 text-muted">
-            {cardFormat?.formatedTypes?.map((poketype) => {
-              return (
-                <Badge
-                  key={name + "_" + poketype?.name + "_" + poketype.type}
-                  bg="none"
-                  style={{ backgroundColor: poketype?.color || "light" }}
-                >
-                  {poketype?.name}
-                </Badge>
-              );
-            })}
-          </Card.Subtitle>
+          <Card.Subtitle className="mb-2 text-muted"></Card.Subtitle>
         </Card.Body>
-        <div className="content">Content about pokemon</div>
+        <div className="content">
+          {cardFormat?.formatedTypes?.map((poketype) => {
+            return (
+              <Badge
+                key={name + "_" + poketype?.name + "_" + poketype.type}
+                bg="none"
+                style={{ backgroundColor: poketype?.color || "light" }}
+              >
+                {poketype?.name}
+              </Badge>
+            );
+          })}
+        </div>
       </Card>
 
       <PokeModal

@@ -2,8 +2,7 @@ import Head from "next/head";
 import { useRef, useState, useEffect } from "react";
 import { Row } from "react-bootstrap";
 import { get } from "../helpers/functions";
-
-import { PokeCard, PokeLoader } from "../components";
+import { PokeCard, PokeLoader, PokeNavbar } from "../components";
 
 export default function Home({ baseUrl }) {
   const listInnerRef = useRef();
@@ -44,6 +43,8 @@ export default function Home({ baseUrl }) {
       }
 
       setPrevPage(currPage);
+      setPageParams(list.next);
+
       if (list && pokemonList) {
         response = {
           count: list.count,
@@ -56,6 +57,14 @@ export default function Home({ baseUrl }) {
     return response;
   };
 
+  const setPageParams = (url) => {
+    const params = new URLSearchParams("?" + url.split("?")[1]);
+    let _o = params.get("offset");
+    let _l = params.get("limit");
+
+    setOffset(_o == 0 ? _l : _o);
+  };
+
   const onScroll = async () => {
     if (listInnerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
@@ -65,6 +74,11 @@ export default function Home({ baseUrl }) {
         setCurrPage(pokemonList.next);
       }
     }
+  };
+
+  const handleSelect = (e) => {
+    setLimit(e);
+    setCurrPage(baseUrl + "?limit=" + e + "&offset=" + offset);
   };
 
   return (
@@ -79,6 +93,13 @@ export default function Home({ baseUrl }) {
           crossOrigin="anonymous"
         />
       </Head>
+      <PokeNavbar
+        count={pokemonList.count}
+        offset={offset}
+        limit={limit}
+        onSelect={(ev) => handleSelect(ev)}
+      />
+
       {isLoading && <PokeLoader />}
 
       <Row onScroll={onScroll} ref={listInnerRef}>

@@ -20,11 +20,17 @@ body {
 }
 
 .row{
-  padding: 5em;
+  padding: 3em;
   margin: 0;
+  margin-top: 5em !important;
   height: 100vh;
   overflow-y: auto;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+
+.navbar-brand{
+  color: white !important;
 }
