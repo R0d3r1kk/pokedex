@@ -2,7 +2,7 @@ import { Colors } from "./Utils";
 export const getCardFormatByType = (types) => {
   let style = {};
   let formatedTypes = [];
-  let fTypes = ''
+  let fTypes = "";
   for (let i = 0; i < types.length; i++) {
     switch (types[i].type.name) {
       case "fire":
@@ -84,11 +84,35 @@ export const getCardFormatByType = (types) => {
         });
         break;
       case "fairy":
-          formatedTypes.push({
-            name: "fairy",
-            color: Colors.fairy,
-          });
-          break;
+        formatedTypes.push({
+          name: "fairy",
+          color: Colors.fairy,
+        });
+        break;
+      case "ghost":
+        formatedTypes.push({
+          name: "ghost",
+          color: Colors.ghost,
+        });
+        break;
+      case "ice":
+        formatedTypes.push({
+          name: "ice",
+          color: Colors.ice,
+        });
+        break;
+      case "steel":
+        formatedTypes.push({
+          name: "steel",
+          color: Colors.steel,
+        });
+        break;
+      case "dark":
+        formatedTypes.push({
+          name: "dark",
+          color: Colors.dark,
+        });
+        break;
       default:
         formatedTypes.push({
           name: "default",
@@ -96,21 +120,62 @@ export const getCardFormatByType = (types) => {
         });
         break;
     }
-    if(formatedTypes && formatedTypes.length >= i && types.length > 0){
+    if (formatedTypes && formatedTypes.length >= i && types.length > 0) {
       formatedTypes[i].type = types[i].slot;
-      fTypes += formatedTypes[i]?.name + " "
+      fTypes += formatedTypes[i]?.name + " ";
     }
-      
   }
 
   style = {
-    className: fTypes.trim()
+    className: fTypes.trim(),
   };
 
   return {
     style,
     formatedTypes,
   };
+};
+
+export const formatPokemonName = (str) => {
+  let name = str;
+  let params = [
+    "plant",
+    "standard",
+    "altered",
+    "land",
+    "normal",
+    "incarnate",
+    "ordinary",
+    "aria",
+    "male",
+    "shield",
+    "average",
+    "midday",
+    "solo",
+    "amped",
+    "full",
+    "single",
+    "striped",
+    "black",
+    "white",
+    "blade",
+    "small",
+    "large",
+    "super",
+  ];
+  let correctParams = ["koko", "lele", "bulu", "fini"];
+  let split = name.split("-");
+  if (split.length > 1) {
+    for (let i = 0; i < split.length; i++) {
+      if (params.includes(split[i])) {
+        name = split[0];
+      } else if (correctParams.includes(split[i])) {
+        break;
+      }
+    }
+  }
+  console.log(name);
+  return name;
 };
 
 export const get = async (url) => {

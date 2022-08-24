@@ -22,13 +22,8 @@
     padding: 10px !important;
     border: none !important;
     border-radius: 0 0 10px 10px !important;
-}
-
-.modal-header .modal-title img{
-    background-color: rgba(33, 37, 41, 0.5);
-    padding: 10px;
-    border-radius: 10px;
-    margin-right: 10px;
+    height: 50% ;
+    transition: 0.4s ease-out;
 }
 
 .modal-header .modal-title span{
@@ -49,6 +44,10 @@
 .modal-body{
     color: white;
     background-color: #1D2024 !important;
+    height: 60vh;
+    transform: translateY(-10vh);
+    border-radius: 50px 50px 0 0;
+    padding-top: 100px !important;
 }
 .modal-footer{
     color: white;
@@ -59,3 +58,40 @@
     background-color: #f4001f;
     border: none;
 }
+.chipsContainer{
+    display: flex;
+}
+
+.chip{
+    background-color: rgb(255 255 255 / 25%);
+    border-radius: 10px;
+    margin-right: 10px;
+    padding: 0 15px;
+    font-size: 1rem;
+    position: relative;
+}
+.pokeGif{    
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: 50%;    
+    border-radius: 10px;
+    width: 200px;
+    height: 200px;
+    position: relative;
+    transform: translateY(100px);
+    z-index: 3;
+}
+.pokeGif::before {    
+    background: rgb(2,0,36);
+    background: linear-gradient(0deg, rgba(2,0,36,1) 0%, rgba(8,9,9,0.654499299719888) 30%, rgba(0,212,255,0) 100%);
+    border-radius: 50%;
+    content: "";
+    height: 20px;
+    position: absolute;
+    width: 90%;
+    bottom: -10px;
+    right: 50%;
+    transform: translateX(50%);
+    z-index: 0;
+    filter: blur(2px);
+  }

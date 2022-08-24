@@ -38,6 +38,7 @@ const PokeNavbar = (props) => {
               <Dropdown.Item eventKey="30">30</Dropdown.Item>
               <Dropdown.Item eventKey="50">50</Dropdown.Item>
               <Dropdown.Item eventKey="100">100</Dropdown.Item>
+              <Dropdown.Item eventKey="500">500</Dropdown.Item>
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>

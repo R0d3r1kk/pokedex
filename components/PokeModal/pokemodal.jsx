@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Button, Col } from "react-bootstrap";
+import { Modal, Button, Badge } from "react-bootstrap";
 import { capitalizeFirstLetter, get } from "../../helpers/functions";
 import { useState, useEffect } from "react";
 import { Colors } from "../../helpers/Utils";
@@ -57,6 +57,13 @@ const PokeModal = (props) => {
       img.onload = () => {
         setGif(src);
       };
+
+      img.onerror = () => {
+        var names = props.pokemon?.name.split("-");
+        setGif(
+          "https://projectpokemon.org/images/normal-sprite/" + names[0] + ".gif"
+        );
+      };
     }
   };
 
@@ -84,19 +91,38 @@ const PokeModal = (props) => {
         }}
       >
         <Modal.Title id="contained-modal-title-vcenter">
-          <img
-            width="70px"
-            height="70px"
-            defaultValue="/pokeball.svg"
-            loading="lazy"
-            alt={pokemon.details?.name}
-            src={gif}
-          />
-          {pokemon.details?.name
-            ? capitalizeFirstLetter(pokemon.details?.name)
-            : "Pokemon"}
-          <span>{"#" + pokemon.details?.id}</span>
+          <div>
+            {pokemon.details?.name
+              ? capitalizeFirstLetter(pokemon.details?.name)
+              : "Pokemon"}
+            <span>{"#" + pokemon.details?.id}</span>
+          </div>
+          <div className="chipsContainer">
+            {pokemon?.details?.types?.map((el) => {
+              return (
+                <div
+                  className="chip"
+                  key={el.slot}
+                  style={{ backgroundColor: "rgba(255,255,255,.5)" }}
+                >
+                  {el?.type?.name}
+                </div>
+              );
+            })}
+          </div>
         </Modal.Title>
+        <div
+          ref={(node) => {
+            if (node) {
+              node.style.setProperty(
+                "background-image",
+                `url(${gif})`,
+                "important"
+              );
+            }
+          }}
+          className="pokeGif"
+        />
         <Button onClick={props.onHide}>Close</Button>
       </Modal.Header>
       <Modal.Body bg="dark">

@@ -29,7 +29,7 @@ const PokeCard = ({ pokemon }) => {
         <Card.Header>
           {capitalizeFirstLetter(name)}
           <Badge pill bg="danger">
-            {"N" + id}
+            {"#" + id}
           </Badge>
         </Card.Header>
         <div className="img-wrapper">

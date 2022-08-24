@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { useRef, useState, useEffect } from "react";
 import { Row } from "react-bootstrap";
-import { get } from "../helpers/functions";
+import { get, formatPokemonName } from "../helpers/functions";
 import { PokeCard, PokeLoader, PokeNavbar } from "../components";
 
 export default function Home({ baseUrl }) {
@@ -35,6 +35,11 @@ export default function Home({ baseUrl }) {
     if (list) {
       for (let i = 0; i < list.results.length; i++) {
         list.results[i].pokemon = await get(list.results[i].url);
+        if (list.results[i].pokemon) {
+          list.results[i].pokemon.name = formatPokemonName(
+            list.results[i].pokemon?.name
+          );
+        }
       }
 
       if (!list.results.length) {
@@ -42,9 +47,10 @@ export default function Home({ baseUrl }) {
         return;
       }
 
-      setPrevPage(currPage);
-      setPageParams(list.next);
-
+      if (list.next != null) {
+        setPrevPage(currPage);
+        setPageParams(list.next);
+      }
       if (list && pokemonList) {
         response = {
           count: list.count,
