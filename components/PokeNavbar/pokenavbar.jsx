@@ -84,7 +84,7 @@ PokeNavbar.propTypes = {
   filter: propTypes.string,
   onFilterSelect: propTypes.func,
   onLimitSelect: propTypes.func,
-  onSearcChange: propTypes.func,
+  onSearchChange: propTypes.func,
 };
 
 export default PokeNavbar;

@@ -1,7 +1,12 @@
 import Head from "next/head";
 import { useRef, useState, useEffect } from "react";
 import { Row } from "react-bootstrap";
-import { get, formatPokemonName, roman_to_Int } from "../helpers/functions";
+import {
+  get,
+  formatPokemonName,
+  roman_to_Int,
+  is_numeric,
+} from "../helpers/functions";
 import {
   BubbleContainer,
   PokeCard,
@@ -41,7 +46,10 @@ export default function Home({ baseUrl }) {
         setIsLoading(false);
       });
     }
-  }, [currPage, prevPage, wasLastList, pokemonList]);
+    if (filterParam == "Generation") {
+      await updatePokemonSpecies();
+    }
+  }, [currPage, prevPage, wasLastList, pokemonList, filterParam]);
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -78,6 +86,21 @@ export default function Home({ baseUrl }) {
     return response;
   };
 
+  const updatePokemonSpecies = async () => {
+    let list = pokemonList;
+    if (list) {
+      for (let i = 0; i < list.results.length; i++) {
+        if (list.results[i].pokemon.species.data === undefined) {
+          list.results[i].pokemon.species = await getSpecies(
+            list.results[i].pokemon.species
+          );
+        }
+      }
+
+      setPokemonList(list);
+    }
+  };
+
   const getSpecies = async (species) => {
     const data = await get(species.url);
     species.data = data;
@@ -110,11 +133,11 @@ export default function Home({ baseUrl }) {
   };
 
   const handleSearch = (items) => {
-    let filtered = items?.filter(async (item) => {
+    let filtered = items?.filter((item) => {
       switch (filterParam) {
         case "All":
           return searchParam.some((search) => {
-            if (q) {
+            if (q !== "") {
               return (
                 item.pokemon[search]
                   .toString()
@@ -125,33 +148,29 @@ export default function Home({ baseUrl }) {
           });
 
         case "Generation":
-          let updateditem = undefined;
-          if (item.pokemon.species.data === undefined) {
-            updateditem = await getSpecies(item.pokemon.species);
-            item.pokemon.species = updateditem;
-          } else {
-            updateditem = item.pokemon.species.data;
-          }
-
-          return searchParam.some((search) => {
-            console.log(updateditem.generation[search], q.toString());
-            if (q) {
-              return updateditem.generation[search]
-                ? updateditem.generation[search]
-                    .toString()
-                    .split("-")
-                    .some((gen) => {
-                      return (
-                        roman_to_Int(gen).toString().indexOf(q.toString()) > -1
-                      );
-                    })
-                : false;
-            } else return item.pokemon[search].toString();
-          });
+          if (q !== "") {
+            if (is_numeric(q)) {
+              return (
+                roman_to_Int(
+                  item.pokemon.species?.data?.generation?.name
+                    ?.toString()
+                    .split("-")[1]
+                )
+                  .toString()
+                  .indexOf(q.toString()) > -1
+              );
+            } else {
+              return (
+                item.pokemon.species?.data?.generation?.name
+                  ?.toString()
+                  .indexOf(q.toString()) > -1
+              );
+            }
+          } else return item.pokemon.name.toString();
 
         case "Version":
           return searchParam.some((search) => {
-            if (q) {
+            if (q !== "") {
               return item.pokemon.game_indices.some((index) => {
                 return index.version[search]
                   ? index.version[search]
@@ -185,7 +204,7 @@ export default function Home({ baseUrl }) {
         limit={limit}
         onLimitSelect={(ev) => handleSelect(ev)}
         searchparam={q}
-        onSearchChange={(e) => setQ(e.target.value)}
+        onSearchChange={(ev) => setQ(ev.target.value)}
         filter={filterParam}
         onFilterSelect={(ev) => setFilterParam(ev)}
       />
