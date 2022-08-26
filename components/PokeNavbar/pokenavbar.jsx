@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  Nav,
-  Navbar,
-  NavDropdown,
-  DropdownButton,
-  Dropdown,
-  Container,
-} from "react-bootstrap";
+import { Nav, Navbar, NavDropdown, Dropdown, Container } from "react-bootstrap";
 
 const PokeNavbar = (props) => {
   return (

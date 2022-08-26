@@ -18,12 +18,13 @@
 
 .modal-header{
     color: white;
-    background-color: #1D2024 !important;
-    padding: 10px !important;
+    background-color: #1D2024 !important;    
     border: none !important;
     border-radius: 0 0 10px 10px !important;
     height: 50% ;
     transition: 0.4s ease-out;
+    padding-left: 5em !important;
+    padding-right: 5em !important;
 }
 
 .modal-header .modal-title span{
@@ -43,12 +44,12 @@
 }
 .modal-body{
     color: white;
-    background-color: #1D2024 !important;
-    height: 60vh;
+    background-color: #1D2024 !important;    
     transform: translateY(-10vh);
     border-radius: 50px 50px 0 0;
-    padding-top: 100px !important;
+    overflow: hidden;
 }
+
 .modal-footer{
     color: white;
     background-color: #1D2024 !important;
@@ -69,6 +70,10 @@
     padding: 0 15px;
     font-size: 1rem;
     position: relative;
+}
+.chip:hover{
+    cursor: pointer;
+    box-shadow: inset #2d3034 0px 2px 2px 1px;
 }
 .pokeGif{    
     background-repeat: no-repeat;

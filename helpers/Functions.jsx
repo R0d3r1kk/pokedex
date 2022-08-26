@@ -122,7 +122,7 @@ export const getCardFormatByType = (types) => {
     }
     if (formatedTypes && formatedTypes.length >= i && types.length > 0) {
       formatedTypes[i].type = types[i].slot;
-      fTypes += formatedTypes[i]?.name + " ";
+      fTypes = formatedTypes[0]?.name + " ";
     }
   }
 
@@ -191,23 +191,21 @@ export const getPokemon = async (id) => {
 };
 
 export const getPokemons = async (baseUrl, baseParams) => {
-  return await fetch(
-    baseUrl + baseParams
-  )
+  return await fetch(baseUrl + baseParams)
     .then((res) => res.json())
     .then((data) => data);
 };
 
 // program to convert first letter of a string to uppercase
 export const capitalizeFirstLetter = (str) => {
-  if(str){
+  if (str) {
     // converting first letter to uppercase
     const capitalized = str.charAt(0).toUpperCase() + str.slice(1);
 
     return capitalized;
   }
   return null;
-}
+};
 
 export const standarizeColor = (str) => {
   let ctx = document.createElement("canvas").getContext("2d");

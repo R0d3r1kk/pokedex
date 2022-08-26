@@ -19,8 +19,30 @@ const PokeCard = ({ pokemon }) => {
     if (types) setCardFormat(getCardFormatByType(types));
   }, [pokemon]);
 
-  return (
-    <>
+  const makeAnimation = (type, i) => {
+    switch (type?.name) {
+      case "fire":
+        return (
+          <div key={i} class="burn">
+            <div class="flame"></div>
+            <div class="flame"></div>
+            <div class="flame"></div>
+            <div class="flame"></div>
+            <div class="flame"></div>
+            <div class="flame"></div>
+            <div class="flame"></div>
+            <div class="flame"></div>
+            <div class="flame"></div>
+            <div class="flame"></div>
+          </div>
+        );
+      case "water":
+        return <div class="watereffect"></div>;
+    }
+  };
+
+  const PkCard = () => {
+    return (
       <Card
         key={id}
         className={"pokecard " + cardFormat?.style?.className || ""}
@@ -35,11 +57,7 @@ const PokeCard = ({ pokemon }) => {
         <div className="img-wrapper">
           <Card.Img
             variant="top"
-            src={
-              "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/" +
-              id +
-              ".png"
-            }
+            src={sprites.other["official-artwork"].front_default}
           />
         </div>
         <Card.Body>
@@ -59,8 +77,16 @@ const PokeCard = ({ pokemon }) => {
             );
           })}
         </div>
+        {cardFormat?.formatedTypes?.map((poketype, i) =>
+          makeAnimation(poketype, i)
+        )}
       </Card>
+    );
+  };
 
+  return (
+    <>
+      <PkCard />
       <PokeModal
         show={modalShow}
         fullscreen={true}

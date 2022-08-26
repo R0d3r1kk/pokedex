@@ -1,8 +1,9 @@
 import React from "react";
-import { Modal, Button, Badge } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 import { capitalizeFirstLetter, get } from "../../helpers/functions";
 import { useState, useEffect } from "react";
 import { Colors } from "../../helpers/Utils";
+import PokeTabs from "../PokeTabs/poketabs";
 
 const PokeModal = (props) => {
   const [pokemon, setPokemon] = useState({
@@ -56,13 +57,6 @@ const PokeModal = (props) => {
 
       img.onload = () => {
         setGif(src);
-      };
-
-      img.onerror = () => {
-        var names = props.pokemon?.name.split("-");
-        setGif(
-          "https://projectpokemon.org/images/normal-sprite/" + names[0] + ".gif"
-        );
       };
     }
   };
@@ -126,13 +120,15 @@ const PokeModal = (props) => {
         <Button onClick={props.onHide}>Close</Button>
       </Modal.Header>
       <Modal.Body bg="dark">
-        <p>
-          Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
-          dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac
-          consectetur ac, vestibulum at eros.
-        </p>
+        <PokeTabs bgcolor={color} pokemon={pokemon} initTabs={opened} />
       </Modal.Body>
-      <Modal.Footer></Modal.Footer>
+      <Modal.Footer
+        className={
+          pokemon?.details.types
+            ? pokemon?.details?.types[0]?.type.name + "-header"
+            : ""
+        }
+      ></Modal.Footer>
     </Modal>
   );
 };

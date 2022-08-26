@@ -2,7 +2,12 @@ import Head from "next/head";
 import { useRef, useState, useEffect } from "react";
 import { Row } from "react-bootstrap";
 import { get, formatPokemonName } from "../helpers/functions";
-import { PokeCard, PokeLoader, PokeNavbar } from "../components";
+import {
+  BubbleContainer,
+  PokeCard,
+  PokeLoader,
+  PokeNavbar,
+} from "../components";
 
 export default function Home({ baseUrl }) {
   const listInnerRef = useRef();
@@ -108,7 +113,11 @@ export default function Home({ baseUrl }) {
 
       {isLoading && <PokeLoader />}
 
-      <Row onScroll={onScroll} ref={listInnerRef}>
+      {/* <Row style={{ width: "100px", height: "100px" }}>
+        <BubbleContainer dataLitHue="20" dataLitCount="100" />
+      </Row> */}
+
+      <Row className="pokerow" onScroll={onScroll} ref={listInnerRef}>
         {pokemonList.results.map((res) => {
           return (
             <PokeCard

@@ -1,0 +1,112 @@
+.modal .modal-body .nav-pills .nav-link {
+    background: 0 0 !important;
+    border: 0 !important;
+    border-radius: 0.375rem !important;
+    color: #393B3C !important;
+    transition: 0.4s ease-out;
+}
+.modal .modal-body .nav-pills .nav-link.active {
+    color: white !important;
+    transition: 0.4s ease-out;
+}
+
+.modal .modal-body .nav-pills .nav-link:hover {
+    background: none;
+    border: none ;
+    box-shadow: inset #000 0px 2px 2px 1px;
+}
+
+.modal .modal-body .pokestats .list-group .hstack{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal .modal-body .pokestats .list-group .hstack .progress{
+    width: 80%;
+}
+
+.modal .modal-body .pokevolution .hstack{
+    justify-content: space-around;
+    text-align: center;
+}
+.tabsContainer{
+    padding-left: 10px !important;
+    padding-right: 10px !important;    
+    z-index: 1;
+    overflow: hidden;
+    height: 100%;
+}
+.tabsContainer .tabsnav{
+    position: relative;
+    max-width: 100%;
+    padding-left: 10px;
+    z-index: 1;
+}
+.tabsContainer .tabsnav .navbar-collapse{
+    margin-top: 10px;
+    z-index: 1;
+}
+
+.tabsContainer .tabsnav button{
+    width: 10%;
+    border: none;
+}
+
+.tabsContainer .tabsnav button:hover{
+    border: none;
+    box-shadow: inset #000 0px 2px 2px 1px;
+}
+
+.tabsContainer .tabsnav button:focus-visible{
+    border: none;
+    box-shadow: none;
+}
+
+.tabsContainer .tabsnav .nav-pills .nav-item a{
+    background-color: #1D2024 !important;
+    z-index: 1;
+}
+
+.tabsContainer .tabsbody{
+    transform: translateY(20px);
+}
+
+.pokevolution .row{
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+}
+
+.pokevolution .row .col{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.evocard{
+    background: none !important;
+    border: none !important;
+    align-items: center;
+    width: 100% !important;
+}
+
+
+.evocard img{
+    width: 80px;
+    height: 80px;
+}
+
+.evocard .card-subtitle{
+    color: #393B3C;
+}
+
+.evocard .card-subtitle.active{
+    color: white;
+}
+
+.evocard .triggerContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
