@@ -19,13 +19,17 @@ const PokeModal = (props) => {
   useEffect(async () => {
     if (opened && !isFinished) {
       loadGif();
-      let species = await get(
-        "https://pokeapi.co/api/v2/pokemon-species/" + props.pokemon.id
-      );
+      let species = undefined;
+      if (props.pokemon.species.data === undefined)
+        species = await get(
+          "https://pokeapi.co/api/v2/pokemon-species/" + props.pokemon.id
+        );
+      else species = props.pokemon.species.data;
       if (species) {
         let evolutionChain = await get(species?.evolution_chain.url);
         let newPokemon = {};
         if (props.pokemon) {
+          props.pokemon.species.data = species;
           newPokemon.details = props.pokemon;
         }
         if (evolutionChain) {

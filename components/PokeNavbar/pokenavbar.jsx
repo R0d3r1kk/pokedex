@@ -1,9 +1,26 @@
 import React from "react";
-import { Nav, Navbar, NavDropdown, Dropdown, Container } from "react-bootstrap";
+import {
+  Nav,
+  Navbar,
+  NavDropdown,
+  Dropdown,
+  Container,
+  Form,
+} from "react-bootstrap";
+import propTypes from "prop-types";
 
-const PokeNavbar = (props) => {
+const PokeNavbar = ({
+  limit,
+  offset,
+  count,
+  searchparam,
+  filter,
+  onFilterSelect,
+  onLimitSelect,
+  onSearchChange,
+}) => {
   return (
-    <Navbar {...props} fixed="top" bg="dark" variant="dark" expand="lg">
+    <Navbar fixed="top" bg="dark" variant="dark" expand="lg">
       <Container fluid>
         <Navbar.Brand href="/">
           <img
@@ -16,16 +33,15 @@ const PokeNavbar = (props) => {
           Pokemons
         </Navbar.Brand>
 
-        <Navbar.Brand href="/">
-          {props.offset + " - " + props.count}
-        </Navbar.Brand>
+        <Navbar.Brand href="/">{offset + " - " + count}</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <NavDropdown
-              title={"Limit " + props.limit}
+              title={"Limit " + limit}
+              defaultValue={limit}
               id="collasible-nav-dropdown"
-              onSelect={props.onSelect}
+              onSelect={onLimitSelect}
             >
               <Dropdown.Item eventKey="10">10</Dropdown.Item>
               <Dropdown.Item eventKey="30">30</Dropdown.Item>
@@ -33,11 +49,42 @@ const PokeNavbar = (props) => {
               <Dropdown.Item eventKey="100">100</Dropdown.Item>
               <Dropdown.Item eventKey="500">500</Dropdown.Item>
             </NavDropdown>
+            <NavDropdown
+              title={"Filter " + filter}
+              defaultValue={filter}
+              id="navbarScrollingDropdown"
+              onSelect={onFilterSelect}
+            >
+              <Dropdown.Item eventKey="All">All</Dropdown.Item>
+              <Dropdown.Item eventKey="Generation">By Generation</Dropdown.Item>
+              <Dropdown.Item eventKey="Version">By Version</Dropdown.Item>
+            </NavDropdown>
           </Nav>
+          <Form className="d-flex">
+            <Form.Control
+              type="search"
+              placeholder="Search"
+              className="me-2"
+              aria-label="Search"
+              value={searchparam}
+              onChange={onSearchChange}
+            />
+          </Form>
         </Navbar.Collapse>
       </Container>
     </Navbar>
   );
+};
+
+PokeNavbar.propTypes = {
+  offset: propTypes.number,
+  limit: propTypes.number,
+  count: propTypes.number,
+  searchparam: propTypes.string,
+  filter: propTypes.string,
+  onFilterSelect: propTypes.func,
+  onLimitSelect: propTypes.func,
+  onSearcChange: propTypes.func,
 };
 
 export default PokeNavbar;

@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { useRef, useState, useEffect } from "react";
 import { Row } from "react-bootstrap";
-import { get, formatPokemonName } from "../helpers/functions";
+import { get, formatPokemonName, roman_to_Int } from "../helpers/functions";
 import {
   BubbleContainer,
   PokeCard,
@@ -22,6 +22,16 @@ export default function Home({ baseUrl }) {
   const [prevPage, setPrevPage] = useState(""); // storing prev page number
   const [wasLastList, setWasLastList] = useState(false); // setting a flag to know the last list
   const [isLoading, setIsLoading] = useState(false); // setting a flag to know the last list
+
+  //     set search query to empty string
+  const [q, setQ] = useState("");
+  //     set search parameters
+  //     we only what to search countries by capital and name
+  //     this list can be longer if you want
+  //     you can search countries even by their population
+  // just add it to this array
+  const [searchParam] = useState(["name", "id"]);
+  const [filterParam, setFilterParam] = useState("All");
 
   useEffect(async () => {
     if (!wasLastList && prevPage !== currPage) {
@@ -68,12 +78,19 @@ export default function Home({ baseUrl }) {
     return response;
   };
 
+  const getSpecies = async (species) => {
+    const data = await get(species.url);
+    species.data = data;
+    console.log(species);
+    return species;
+  };
+
   const setPageParams = (url) => {
     const params = new URLSearchParams("?" + url.split("?")[1]);
     let _o = params.get("offset");
     let _l = params.get("limit");
 
-    setOffset(_o == 0 ? _l : _o);
+    setOffset(_o == 0 ? parseInt(_l) : parseInt(_o));
   };
 
   const onScroll = async () => {
@@ -92,6 +109,64 @@ export default function Home({ baseUrl }) {
     setCurrPage(baseUrl + "?limit=" + e + "&offset=" + offset);
   };
 
+  const handleSearch = (items) => {
+    let filtered = items?.filter(async (item) => {
+      switch (filterParam) {
+        case "All":
+          return searchParam.some((search) => {
+            if (q) {
+              return (
+                item.pokemon[search]
+                  .toString()
+                  .toLowerCase()
+                  .indexOf(q.toLowerCase()) > -1
+              );
+            } else return item.pokemon[search].toString();
+          });
+
+        case "Generation":
+          let updateditem = undefined;
+          if (item.pokemon.species.data === undefined) {
+            updateditem = await getSpecies(item.pokemon.species);
+            item.pokemon.species = updateditem;
+          } else {
+            updateditem = item.pokemon.species.data;
+          }
+
+          return searchParam.some((search) => {
+            console.log(updateditem.generation[search], q.toString());
+            if (q) {
+              return updateditem.generation[search]
+                ? updateditem.generation[search]
+                    .toString()
+                    .split("-")
+                    .some((gen) => {
+                      return (
+                        roman_to_Int(gen).toString().indexOf(q.toString()) > -1
+                      );
+                    })
+                : false;
+            } else return item.pokemon[search].toString();
+          });
+
+        case "Version":
+          return searchParam.some((search) => {
+            if (q) {
+              return item.pokemon.game_indices.some((index) => {
+                return index.version[search]
+                  ? index.version[search]
+                      .toString()
+                      .toLowerCase()
+                      .indexOf(q.toLocaleLowerCase()) > -1
+                  : false;
+              });
+            } else return item.pokemon[search].toString();
+          });
+      }
+    });
+    return filtered ? filtered : [];
+  };
+
   return (
     <div className="pokecon">
       <Head>
@@ -108,7 +183,11 @@ export default function Home({ baseUrl }) {
         count={pokemonList.count}
         offset={offset}
         limit={limit}
-        onSelect={(ev) => handleSelect(ev)}
+        onLimitSelect={(ev) => handleSelect(ev)}
+        searchparam={q}
+        onSearchChange={(e) => setQ(e.target.value)}
+        filter={filterParam}
+        onFilterSelect={(ev) => setFilterParam(ev)}
       />
 
       {isLoading && <PokeLoader />}
@@ -118,7 +197,7 @@ export default function Home({ baseUrl }) {
       </Row> */}
 
       <Row className="pokerow" onScroll={onScroll} ref={listInnerRef}>
-        {pokemonList.results.map((res) => {
+        {handleSearch(pokemonList?.results).map((res) => {
           return (
             <PokeCard
               key={res?.pokemon?.id}

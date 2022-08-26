@@ -23,23 +23,23 @@ const PokeCard = ({ pokemon }) => {
     switch (type?.name) {
       case "fire":
         return (
-          <div key={i} class="burn">
-            <div class="flame"></div>
-            <div class="flame"></div>
-            <div class="flame"></div>
-            <div class="flame"></div>
-            <div class="flame"></div>
-            <div class="flame"></div>
-            <div class="flame"></div>
-            <div class="flame"></div>
-            <div class="flame"></div>
-            <div class="flame"></div>
+          <div key={i} className="burn">
+            <div className="flame"></div>
+            <div className="flame"></div>
+            <div className="flame"></div>
+            <div className="flame"></div>
+            <div className="flame"></div>
+            <div className="flame"></div>
+            <div className="flame"></div>
+            <div className="flame"></div>
+            <div className="flame"></div>
+            <div className="flame"></div>
           </div>
         );
       case "water":
-        return <div class="watereffect"></div>;
+        return <div key={i} className="watereffect"></div>;
       case "poison":
-        return <div class="poisoneffect"></div>;
+        return <div key={i} className="poisoneffect"></div>;
     }
   };
 
