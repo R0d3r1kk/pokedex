@@ -1025,6 +1025,33 @@
     animation-timing-function: linear;
     z-index: auto;
   }
+
+  /*posion anim*/
+
+  .poison:hover .poisoneffect{
+    position: absolute;
+    background-color: #Bc6aec;
+    z-index: 1;
+    width: 300px;
+    height: 300px;
+  
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  
+    transition: all 0.5s ease !important;
+    -webkit-transition: all 0.5s ease !important;
+  
+    bottom: 10%;
+    left: -60%;
+    border: 1px solid transparent;
+    border-radius: 40% !important;
+  
+    animation-name: waterspin;
+    animation-duration: 8s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    z-index: auto;
+  }
   
   /*bubble anim*/
   .minimal {

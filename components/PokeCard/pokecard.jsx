@@ -38,6 +38,8 @@ const PokeCard = ({ pokemon }) => {
         );
       case "water":
         return <div class="watereffect"></div>;
+      case "poison":
+        return <div class="poisoneffect"></div>;
     }
   };
 
