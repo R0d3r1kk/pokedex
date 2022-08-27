@@ -34,3 +34,13 @@ body {
 .navbar-brand{
   color: white !important;
 }
+
+.toastrefresh{
+  cursor: pointer;
+  text-decoration: none;
+  color: #ee5a50;
+}
+
+.toastrefresh:hover{
+  color: #1b1b1b;
+}

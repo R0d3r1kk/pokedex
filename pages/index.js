@@ -1,6 +1,6 @@
 import Head from "next/head";
-import { useRef, useState, useEffect } from "react";
-import { Row } from "react-bootstrap";
+import { useRef, useState, useEffect, useCallback } from "react";
+import { Row, CloseButton, Stack } from "react-bootstrap";
 import {
   formatPokemonName,
   roman_to_Int,
@@ -13,9 +13,9 @@ import {
   PokeNavbar,
 } from "../components";
 import { getPokemons } from "../helpers/GraphHelper.tsx";
+import toast, { Toaster, ToastBar } from "react-hot-toast";
 
 export default function Home({ baseUrl }) {
-  const listInnerRef = useRef();
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
   const [pokemonList, setPokemonList] = useState({
@@ -39,18 +39,28 @@ export default function Home({ baseUrl }) {
     if (!wasLastList && prevPage !== currPage) {
       fetchData().then((data) => {
         setIsLoading(false);
-        if (!data) {
-          setMsgAvailable(true);
-          return;
-        }
+        if (!data) return;
         setOffset(parseInt(data.results?.length));
         setPokemonList(data);
         console.log(data);
+        toast.success(`Rows retrieved ${data.results?.length}`, {
+          id: "rows",
+          icon: <img src="/pokeball.svg" width={30} height={30} />,
+          position: "top-center",
+        });
       });
     }
+
+    window.addEventListener("scroll", isScrolling);
+    return () => window.removeEventListener("scroll", isScrolling);
   }, [currPage, prevPage, wasLastList, pokemonList]);
 
   const fetchData = () => {
+    toast(`Fetching Data from Graph`, {
+      id: "fetch",
+      icon: <img src="/pokeball.svg" width={30} height={30} />,
+      position: "top-center",
+    });
     setIsLoading(true);
     return getPokemons({ limit: limit, offset: offset }).then((res) => {
       const response = {};
@@ -77,15 +87,35 @@ export default function Home({ baseUrl }) {
     });
   };
 
-  const onScroll = async () => {
-    if (listInnerRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
-      if (scrollTop + clientHeight === scrollHeight) {
-        // This will be triggered after hitting the last element.
-        // API call should be made here while implementing pagination.
-        setCurrPage(pokemonList.next);
-      }
+  const isScrolling = () => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop !==
+      document.documentElement.offsetHeight
+    ) {
+      toast.dismiss("refresh");
+      return;
     }
+    toast(
+      (t) => (
+        <span>
+          Get More <>Pokemons</>{" "}
+          <a
+            className="toastrefresh"
+            onClick={() => {
+              setCurrPage(pokemonList.next);
+              toast.dismiss("refresh");
+            }}
+          >
+            Refresh
+          </a>
+        </span>
+      ),
+      {
+        id: "refresh",
+        icon: <img src="/pokeball.svg" width={30} height={30} />,
+        position: "bottom-left",
+      }
+    );
   };
 
   const handleSelect = (e) => {
@@ -146,6 +176,9 @@ export default function Home({ baseUrl }) {
   return (
     <div className="pokecon">
       <Head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="" />
         <title>Pokedex</title>
         <link rel="icon" href="./pokeball.svg" />
         <link
@@ -172,7 +205,7 @@ export default function Home({ baseUrl }) {
         <BubbleContainer dataLitHue="20" dataLitCount="100" />
       </Row> */}
 
-      <Row className="pokerow" onScroll={onScroll} ref={listInnerRef}>
+      <Row className="pokerow">
         {handleSearch(pokemonList?.results).map((res) => {
           return (
             <PokeCard
@@ -184,6 +217,23 @@ export default function Home({ baseUrl }) {
           );
         })}
       </Row>
+      <Toaster>
+        {(t) => (
+          <ToastBar toast={t}>
+            {({ icon, message }) => (
+              <>
+                {icon}
+                {message}
+                {t.type !== "loading" && (
+                  <CloseButton
+                    onClick={() => toast.dismiss(t.id)}
+                  ></CloseButton>
+                )}
+              </>
+            )}
+          </ToastBar>
+        )}
+      </Toaster>
     </div>
   );
 }
