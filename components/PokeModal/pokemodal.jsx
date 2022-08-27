@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal, Button } from "react-bootstrap";
-import { capitalizeFirstLetter, get } from "../../helpers/functions";
+import { capitalizeFirstLetter } from "../../helpers/functions";
 import { useState, useEffect } from "react";
 import { Colors } from "../../helpers/Utils";
 import PokeTabs from "../PokeTabs/poketabs";
@@ -104,14 +104,15 @@ const PokeModal = (props) => {
         />
         <Button onClick={props.onHide}>Close</Button>
       </Modal.Header>
-      <Modal.Body bg="dark">
-        <PokeTabs bgcolor={color} pokemon={pokemon} initTabs={opened} />
-      </Modal.Body>
-      <Modal.Footer
+
+      <PokeTabs
         className={
           pokemon?.types ? pokemon?.types[0]?.type.name + "-header" : ""
         }
-      ></Modal.Footer>
+        bgcolor={color}
+        pokemon={pokemon}
+        initTabs={opened}
+      />
     </Modal>
   );
 };

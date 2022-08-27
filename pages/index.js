@@ -25,7 +25,6 @@ export default function Home({ baseUrl }) {
   const [prevPage, setPrevPage] = useState(-1); // storing prev page number
   const [wasLastList, setWasLastList] = useState(false); // setting a flag to know the last list
   const [isLoading, setIsLoading] = useState(false); // setting a flag to know the last list
-
   //     set search query to empty string
   const [q, setQ] = useState("");
   //     set search parameters
@@ -40,7 +39,10 @@ export default function Home({ baseUrl }) {
     if (!wasLastList && prevPage !== currPage) {
       fetchData().then((data) => {
         setIsLoading(false);
-        if (!data) return;
+        if (!data) {
+          setMsgAvailable(true);
+          return;
+        }
         setOffset(parseInt(data.results?.length));
         setPokemonList(data);
         console.log(data);
@@ -51,8 +53,9 @@ export default function Home({ baseUrl }) {
   const fetchData = () => {
     setIsLoading(true);
     return getPokemons({ limit: limit, offset: offset }).then((res) => {
-      if (!res) return;
       const response = {};
+      if (!res) return;
+
       const list = res.data;
       if (!list.results.length) {
         setWasLastList(true);

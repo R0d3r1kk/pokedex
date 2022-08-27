@@ -179,7 +179,7 @@
   background-repeat: no-repeat;
   background-position: 85% -30%;
   background-size: 150%;
-  background-image: url("../assets/svg/bug.png");
+  /* background-image: url("../assets/svg/bug.png"); */
   z-index: 0;
 }
 
@@ -209,7 +209,7 @@
   content: "";
   width: 20em;
   height: 20em;
-  bottom: 10px;
+  bottom: -5%;
   left: 10px;
   position: absolute;
   background-position: 0%;
@@ -372,7 +372,7 @@
   background-repeat: no-repeat;
   background-position: 0;
   background-size: contain;
-  background-image: url("../assets/svg/bug.png");
+  /* background-image: url("../assets/svg/bug.png"); */
   z-index: 0;
 }
 

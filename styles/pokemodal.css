@@ -1,20 +1,6 @@
 .modal-content{
     background-color: #1D2024 !important;
 }
-.modal:after {
-    content: "";
-    background-image: url(https://icon-library.com/images/pokemon-desktop-icon/pokemon-desktop-icon-23.jpg);
-    background-repeat: no-repeat;
-    background-size: 20em;
-    filter: brightness(100%);
-    opacity: 0.3;
-    position: absolute;
-    height: 20em;
-    width: 10em;
-    right: 0;
-    bottom: 5em;
-    z-index: 1;    
-  }
 
 .modal-header{
     color: white;
@@ -43,10 +29,15 @@
     box-shadow: inset #2d3034 0px 2px 2px 1px;
 }
 .modal-body{
+    z-index: 1;
+}
+
+.modal-poketabs{
     color: white;
     background-color: #1D2024 !important;    
     transform: translateY(-10vh);
     border-radius: 50px 50px 0 0;
+    height: 100%;
     overflow: hidden;
 }
 
@@ -86,6 +77,7 @@
     transform: translateY(100px);
     z-index: 3;
 }
+
 .pokeGif::before {    
     background: rgb(2,0,36);
     background: linear-gradient(0deg, rgba(2,0,36,1) 0%, rgba(8,9,9,0.654499299719888) 30%, rgba(0,212,255,0) 100%);
