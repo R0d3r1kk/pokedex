@@ -16,16 +16,14 @@ import { capitalizeFirstLetter } from "../../helpers/functions";
 const PokeTabs = ({ bgcolor, pokemon, initTabs }) => {
   const [tabKey, setTabKey] = useState("about");
   const [tabColor, setTabColor] = useState();
-  const [evos, setEvos] = useState([]);
   const [hasMega, setHasMega] = useState(false);
+  const [megaName, setMegaName] = useState();
 
   useEffect(async () => {
     if (initTabs) {
-      let evolutions = getEvolutions();
-      setEvos(evolutions);
-
-      let evoname = `${evolutions[evolutions.length - 1].name}-mega`;
-      await fetchImage(evoname);
+      let megaName = `${pokemon?.species?.evolution_chain?.chain[2]?.name}-mega`;
+      setMegaName(megaName);
+      await fetchImage(megaName);
     }
   }, [pokemon.evolution, hasMega]);
 
@@ -102,39 +100,6 @@ const PokeTabs = ({ bgcolor, pokemon, initTabs }) => {
     };
   };
 
-  const getEvolutions = () => {
-    let finished = false;
-    let evolutions = [];
-    const chain = pokemon.evolution?.chain;
-    if (chain) {
-      while (!finished) {
-        const { evolves_to, species } = chain;
-
-        let mTrigger = null;
-
-        if (chain?.evolution_details?.length > 0) {
-          const { trigger, min_level } = chain.evolution_details[0];
-          mTrigger = {
-            name: trigger.name,
-            min_level,
-          };
-        }
-
-        const evo = {
-          name: species.name,
-          url: species.url,
-          trigger: mTrigger,
-        };
-
-        evolutions.push(evo);
-
-        if (evolves_to.length > 0) chain = evolves_to[0];
-        else finished = true;
-      }
-
-      return evolutions;
-    }
-  };
   return (
     <Navbar className="tabsContainer" expand="lg" bg="none" variant="dark">
       <Tab.Container
@@ -163,9 +128,9 @@ const PokeTabs = ({ bgcolor, pokemon, initTabs }) => {
               <Tab.Pane eventKey="about">About</Tab.Pane>
               <Tab.Pane className="pokestats" eventKey="stats">
                 <ListGroup>
-                  {pokemon?.details?.stats?.map((item) => (
+                  {pokemon?.stats?.map((item) => (
                     <Stat
-                      key={item.stat.url}
+                      key={item.stat.id}
                       name={item.stat.name}
                       stat={item.base_stat}
                     />
@@ -174,18 +139,22 @@ const PokeTabs = ({ bgcolor, pokemon, initTabs }) => {
               </Tab.Pane>
               <Tab.Pane className="pokevolution" eventKey="evolution">
                 <Row gap={2}>
-                  {evos?.map((item, i) => {
+                  {pokemon?.species?.evolution_chain?.chain?.map((item, i) => {
                     return (
-                      <Col key={item.url + i}>
+                      <Col key={item.id + i}>
                         <Row>
                           <Col className="triggerContainer">
-                            {item.trigger && (
+                            {item?.evolution_details.length > 0 && (
                               <div
                                 className="row trigger"
                                 style={{ color: `${tabColor}86` }}
                               >
-                                <span>{item.trigger.name}</span>
-                                <span>{item.trigger.min_level}</span>
+                                <span>
+                                  {item.evolution_details[0].trigger.name}
+                                </span>
+                                <span>
+                                  {item.evolution_details[0].trigger.min_level}
+                                </span>
                               </div>
                             )}
                           </Col>
@@ -197,8 +166,8 @@ const PokeTabs = ({ bgcolor, pokemon, initTabs }) => {
                                 ".gif"
                               }
                               name={item.name}
-                              number={item.url.split("/")[6]}
-                              trigger={item.trigger}
+                              number={item.id}
+                              trigger={item?.evolution_details[0]?.trigger}
                             />
                           </Col>
                         </Row>
@@ -211,11 +180,15 @@ const PokeTabs = ({ bgcolor, pokemon, initTabs }) => {
                     <EvoCard
                       url={
                         "https://projectpokemon.org/images/normal-sprite/" +
-                        evos[evos.length - 1].name +
-                        "-mega.gif"
+                        megaName +
+                        ".gif"
                       }
-                      name={evos[evos.length - 1].name + "-mega"}
-                      number={""}
+                      name={megaName}
+                      number={pokemon?.species?.evolution_chain?.chain[2]?.id}
+                      trigger={
+                        pokemon?.species?.evolution_chain?.chain[2]
+                          ?.evolution_details[0]?.trigger
+                      }
                     />
                   )}
                 </Row>
