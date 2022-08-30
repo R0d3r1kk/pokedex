@@ -218,8 +218,7 @@ export default function Home({ baseUrl }) {
         offset={offset}
         limit={limit}
         onLimitSelect={(ev) => handleSelect(ev)}
-        searchparam={q}
-        onSearchChange={(ev) => setQ(ev.target.value)}
+        onSearchChange={setQ}
         filter={filterParam}
         onFilterSelect={(ev) => setFilterParam(ev)}
       />
@@ -231,7 +230,7 @@ export default function Home({ baseUrl }) {
       </Row> */}
 
       <Row className="pokerow">
-        {handleSearch(pokemonList?.results).map((res) => {
+        {handleSearch(pokemonList?.results)?.map((res) => {
           return (
             <PokeCard
               key={`${res?.name}-${res?.id}`}

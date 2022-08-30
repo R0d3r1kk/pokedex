@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Nav,
   Navbar,
@@ -8,17 +8,33 @@ import {
   Form,
 } from "react-bootstrap";
 import propTypes from "prop-types";
+import debounce from "lodash.debounce";
 
 const PokeNavbar = ({
   limit,
   offset,
   count,
-  searchparam,
   filter,
   onFilterSelect,
   onLimitSelect,
   onSearchChange,
 }) => {
+  const filterRef = useRef();
+  const [search, setSearch] = useState();
+  useEffect(() => {
+    let delayTimeOutFunction;
+
+    if (!filterRef.current) {
+      filterRef.current = true;
+    } else {
+      // componentDidMount equivalent
+      delayTimeOutFunction = setTimeout(() => {
+        onSearchChange(search);
+      }, 500); // denounce delay
+    }
+    return () => clearTimeout(delayTimeOutFunction);
+  }, [search]);
+
   return (
     <Navbar fixed="top" bg="dark" variant="dark" expand="lg">
       <Container fluid>
@@ -68,8 +84,8 @@ const PokeNavbar = ({
               placeholder="Search"
               className="me-2"
               aria-label="Search"
-              value={searchparam}
-              onChange={onSearchChange}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
             />
           </Form>
         </Navbar.Collapse>
