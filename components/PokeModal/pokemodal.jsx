@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal, Button } from "react-bootstrap";
-import { capitalizeFirstLetter, get } from "../../helpers/functions";
+import { capitalizeFirstLetter } from "../../helpers/functions";
 import { useState, useEffect } from "react";
 import { Colors } from "../../helpers/Utils";
 import PokeTabs from "../PokeTabs/poketabs";
@@ -19,32 +19,15 @@ const PokeModal = (props) => {
   useEffect(async () => {
     if (opened && !isFinished) {
       loadGif();
-      let species = undefined;
-      if (props.pokemon.species.data === undefined)
-        species = await get(
-          "https://pokeapi.co/api/v2/pokemon-species/" + props.pokemon.id
-        );
-      else species = props.pokemon.species.data;
-      if (species) {
-        let evolutionChain = await get(species?.evolution_chain.url);
-        let newPokemon = {};
-        if (props.pokemon) {
-          props.pokemon.species.data = species;
-          newPokemon.details = props.pokemon;
-        }
-        if (evolutionChain) {
-          newPokemon.evolution = evolutionChain;
-        }
-        if (species.varieties) {
-          newPokemon.mega_evolution = species.varieties;
-        }
+
+      if (props.pokemon.species) {
         if (props.pokemon.types) {
           let types = props.pokemon.types;
           setColor(Colors[types[0].type.name]);
         }
 
-        setPokemon(newPokemon);
-        console.log(newPokemon);
+        setPokemon(props.pokemon);
+        console.log(props.pokemon);
         setFinished(true);
       }
     }
@@ -90,13 +73,11 @@ const PokeModal = (props) => {
       >
         <Modal.Title id="contained-modal-title-vcenter">
           <div>
-            {pokemon.details?.name
-              ? capitalizeFirstLetter(pokemon.details?.name)
-              : "Pokemon"}
-            <span>{"#" + pokemon.details?.id}</span>
+            {pokemon?.name ? capitalizeFirstLetter(pokemon?.name) : "Pokemon"}
+            <span>{"#" + pokemon?.id}</span>
           </div>
           <div className="chipsContainer">
-            {pokemon?.details?.types?.map((el) => {
+            {pokemon?.types?.map((el) => {
               return (
                 <div
                   className="chip"
@@ -123,16 +104,15 @@ const PokeModal = (props) => {
         />
         <Button onClick={props.onHide}>Close</Button>
       </Modal.Header>
-      <Modal.Body bg="dark">
-        <PokeTabs bgcolor={color} pokemon={pokemon} initTabs={opened} />
-      </Modal.Body>
-      <Modal.Footer
+
+      <PokeTabs
         className={
-          pokemon?.details.types
-            ? pokemon?.details?.types[0]?.type.name + "-header"
-            : ""
+          pokemon?.types ? pokemon?.types[0]?.type.name + "-header" : ""
         }
-      ></Modal.Footer>
+        bgcolor={color}
+        pokemon={pokemon}
+        initTabs={opened}
+      />
     </Modal>
   );
 };

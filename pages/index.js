@@ -1,8 +1,7 @@
 import Head from "next/head";
-import { useRef, useState, useEffect } from "react";
-import { Row } from "react-bootstrap";
+import { useRef, useState, useEffect, useCallback } from "react";
+import { Row, CloseButton, Dropdown } from "react-bootstrap";
 import {
-  get,
   formatPokemonName,
   roman_to_Int,
   is_numeric,
@@ -13,21 +12,19 @@ import {
   PokeLoader,
   PokeNavbar,
 } from "../components";
+import { getPokemons } from "../helpers/GraphHelper.tsx";
+import toast, { Toaster, ToastBar } from "react-hot-toast";
 
 export default function Home({ baseUrl }) {
-  const listInnerRef = useRef();
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
   const [pokemonList, setPokemonList] = useState({
     results: [],
   });
-  const [currPage, setCurrPage] = useState(
-    baseUrl + "?limit=" + limit + "&offset=" + offset
-  ); // storing current page number
-  const [prevPage, setPrevPage] = useState(""); // storing prev page number
+  const [currPage, setCurrPage] = useState(0); // storing current page number
+  const [prevPage, setPrevPage] = useState(-1); // storing prev page number
   const [wasLastList, setWasLastList] = useState(false); // setting a flag to know the last list
   const [isLoading, setIsLoading] = useState(false); // setting a flag to know the last list
-
   //     set search query to empty string
   const [q, setQ] = useState("");
   //     set search parameters
@@ -38,98 +35,77 @@ export default function Home({ baseUrl }) {
   const [searchParam] = useState(["name", "id"]);
   const [filterParam, setFilterParam] = useState("All");
 
-  useEffect(async () => {
+  useEffect(() => {
     if (!wasLastList && prevPage !== currPage) {
       fetchData().then((data) => {
+        setIsLoading(false);
+        if (!data) return;
+        setOffset(parseInt(data.results?.length));
         setPokemonList(data);
         console.log(data);
-        setIsLoading(false);
+
+        toast(
+          (t) => (
+            <span>
+              Get More <>Pokemons</>{" "}
+              <a
+                className="toastrefresh"
+                onClick={() => {
+                  setCurrPage(pokemonList.next);
+                  toast.dismiss("refresh");
+                }}
+              >
+                Refresh
+              </a>
+            </span>
+          ),
+          {
+            id: "refresh",
+            icon: <img src="/pokeball.svg" width={30} height={30} />,
+            position: "bottom-left",
+            duration: Infinity,
+          }
+        );
       });
     }
-    if (filterParam == "Generation") {
-      await updatePokemonSpecies();
-    }
-  }, [currPage, prevPage, wasLastList, pokemonList, filterParam]);
+  }, [currPage, prevPage, wasLastList, pokemonList]);
 
-  const fetchData = async () => {
+  const fetchData = () => {
     setIsLoading(true);
-    let response = {};
-    let list = await get(currPage);
-    if (list) {
-      for (let i = 0; i < list.results.length; i++) {
-        list.results[i].pokemon = await get(list.results[i].url);
-        if (list.results[i].pokemon) {
-          list.results[i].pokemon.name = formatPokemonName(
-            list.results[i].pokemon?.name
-          );
-        }
-      }
+    return getPokemons({ limit: limit, offset: offset }).then((res) => {
+      const response = {};
+      if (!res) return;
 
+      const list = res.data;
       if (!list.results.length) {
         setWasLastList(true);
         return;
       }
 
-      if (list.next != null) {
-        setPrevPage(currPage);
-        setPageParams(list.next);
-      }
+      toast.success(`Rows retrieved ${list.results?.length}`, {
+        id: "rows",
+        icon: <img src="/pokeball.svg" width={30} height={30} />,
+        position: "top-center",
+      });
+
+      setPrevPage(currPage);
+
       if (list && pokemonList) {
         response = {
-          count: list.count,
-          next: list.next,
-          previuos: list.previuos,
+          count: list.pagination.item.count,
+          next: currPage + 1,
+          previuos: currPage - 1,
           results: [...pokemonList.results, ...list.results],
         };
       }
-    }
-    return response;
-  };
 
-  const updatePokemonSpecies = async () => {
-    let list = pokemonList;
-    if (list) {
-      for (let i = 0; i < list.results.length; i++) {
-        if (list.results[i].pokemon.species.data === undefined) {
-          list.results[i].pokemon.species = await getSpecies(
-            list.results[i].pokemon.species
-          );
-        }
-      }
-
-      setPokemonList(list);
-    }
-  };
-
-  const getSpecies = async (species) => {
-    const data = await get(species.url);
-    species.data = data;
-    console.log(species);
-    return species;
-  };
-
-  const setPageParams = (url) => {
-    const params = new URLSearchParams("?" + url.split("?")[1]);
-    let _o = params.get("offset");
-    let _l = params.get("limit");
-
-    setOffset(_o == 0 ? parseInt(_l) : parseInt(_o));
-  };
-
-  const onScroll = async () => {
-    if (listInnerRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
-      if (scrollTop + clientHeight === scrollHeight) {
-        // This will be triggered after hitting the last element.
-        // API call should be made here while implementing pagination.
-        setCurrPage(pokemonList.next);
-      }
-    }
+      return response;
+    });
   };
 
   const handleSelect = (e) => {
-    setLimit(e);
-    setCurrPage(baseUrl + "?limit=" + e + "&offset=" + offset);
+    setLimit(parseInt(e));
+    setCurrPage(0);
   };
 
   const handleSearch = (items) => {
@@ -139,12 +115,10 @@ export default function Home({ baseUrl }) {
           return searchParam.some((search) => {
             if (q !== "") {
               return (
-                item.pokemon[search]
-                  .toString()
-                  .toLowerCase()
-                  .indexOf(q.toLowerCase()) > -1
+                item[search].toString().toLowerCase().indexOf(q.toLowerCase()) >
+                -1
               );
-            } else return item.pokemon[search].toString();
+            } else return item[search].toString();
           });
 
         case "Generation":
@@ -152,26 +126,24 @@ export default function Home({ baseUrl }) {
             if (is_numeric(q)) {
               return (
                 roman_to_Int(
-                  item.pokemon.species?.data?.generation?.name
-                    ?.toString()
-                    .split("-")[1]
+                  item.species?.generation?.name?.toString().split("-")[1]
                 )
                   .toString()
                   .indexOf(q.toString()) > -1
               );
             } else {
               return (
-                item.pokemon.species?.data?.generation?.name
+                item.species?.generation?.name
                   ?.toString()
                   .indexOf(q.toString()) > -1
               );
             }
-          } else return item.pokemon.name.toString();
+          } else return item.name.toString();
 
         case "Version":
           return searchParam.some((search) => {
             if (q !== "") {
-              return item.pokemon.game_indices.some((index) => {
+              return item?.game_indices?.some((index) => {
                 return index.version[search]
                   ? index.version[search]
                       .toString()
@@ -179,8 +151,48 @@ export default function Home({ baseUrl }) {
                       .indexOf(q.toLocaleLowerCase()) > -1
                   : false;
               });
-            } else return item.pokemon[search].toString();
+            } else return item[search].toString();
           });
+        case "Color":
+          if (q !== "") {
+            return (
+              item?.species?.color?.name
+                .toString()
+                .toLowerCase()
+                .indexOf(q.toLocaleLowerCase()) > -1
+            );
+          } else return item.name.toString();
+        case "Type":
+          if (q !== "" && q.indexOf(",") == -1) {
+            return item.types.some((itemtype) => {
+              return (
+                itemtype?.type?.name
+                  .toString()
+                  .toLowerCase()
+                  .indexOf(q.toLocaleLowerCase()) > -1
+              );
+            });
+          } else if (q.indexOf(",") > -1) {
+            var qs = q.split(",");
+            if (qs[1])
+              return (
+                item.types[0]?.type?.name
+                  .toString()
+                  .toLowerCase()
+                  .indexOf(qs[0]) > -1 &&
+                item.types[1]?.type?.name
+                  .toString()
+                  .toLowerCase()
+                  .indexOf(qs[1]) > -1
+              );
+            else
+              return (
+                item.types[0]?.type?.name
+                  .toString()
+                  .toLowerCase()
+                  .indexOf(qs[0]) > -1
+              );
+          } else return item.name.toString();
       }
     });
     return filtered ? filtered : [];
@@ -189,6 +201,9 @@ export default function Home({ baseUrl }) {
   return (
     <div className="pokecon">
       <Head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="" />
         <title>Pokedex</title>
         <link rel="icon" href="./pokeball.svg" />
         <link
@@ -215,18 +230,35 @@ export default function Home({ baseUrl }) {
         <BubbleContainer dataLitHue="20" dataLitCount="100" />
       </Row> */}
 
-      <Row className="pokerow" onScroll={onScroll} ref={listInnerRef}>
+      <Row className="pokerow">
         {handleSearch(pokemonList?.results).map((res) => {
           return (
             <PokeCard
-              key={res?.pokemon?.id}
-              pokemon={res?.pokemon}
+              key={`${res?.name}-${res?.id}`}
+              pokemon={res}
               onClick={() => setModalShow(true)}
               url={baseUrl}
             />
           );
         })}
       </Row>
+      <Toaster>
+        {(t) => (
+          <ToastBar toast={t}>
+            {({ icon, message }) => (
+              <>
+                {icon}
+                {message}
+                {t.type !== "loading" && t.type != "blank" && (
+                  <CloseButton
+                    onClick={() => toast.dismiss(t.id)}
+                  ></CloseButton>
+                )}
+              </>
+            )}
+          </ToastBar>
+        )}
+      </Toaster>
     </div>
   );
 }

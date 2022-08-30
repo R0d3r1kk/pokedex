@@ -8,13 +8,13 @@ module.exports = {
   },
   webpack: (config) => {
     if (isDev) {
+      config.module.rules.push({
+        test: /\.svg$/,
+        issuer: { and: [/\.(js|ts|md)x?$/] },
+        use: ["@svgr/webpack"],
+      });
       return config;
     }
-
-    config.rmodule.rules.push({
-      test: /\.svg$/,
-      use: ["@svgr/webpack"],
-    });
 
     return {
       ...config,

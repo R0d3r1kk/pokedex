@@ -7,7 +7,7 @@
 
 body {
   background: white;
-  background: linear-gradient(to right, #ee5a50, #1b1b1b);
+  background: linear-gradient(to right, #ee5a50, #C4c7c9, #1d1d1d);
   font-family: "Fira Sans", sans-serif;
   padding: 0;
   margin: 0;
@@ -33,4 +33,14 @@ body {
 
 .navbar-brand{
   color: white !important;
+}
+
+.toastrefresh{
+  cursor: pointer;
+  text-decoration: none;
+  color: #ee5a50;
+}
+
+.toastrefresh:hover{
+  color: #1b1b1b;
 }

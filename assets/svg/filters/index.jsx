@@ -1,0 +1,9 @@
+export { default as GoeFilter } from "./goefilter.svg";
+export { default as GhostFilter } from "./ghostfilter.svg";
+export { default as WaterFilter } from "./waterfilter.svg";
+export { default as PsychicFilter } from "./psychicfilter.svg";
+export { default as GroundFilter } from "./groundfilter.svg";
+export { default as PoisonFilter } from "./poisonfilter.svg";
+export { default as NormalFilter } from "./normalfilter.svg";
+export { default as BugFilter } from "./bugfilter.svg";
+export { default as DarkFilter } from "./darkfilter.svg";
