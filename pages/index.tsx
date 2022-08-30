@@ -15,6 +15,8 @@ import {
 import { getPokemons } from "../helpers/GraphHelper.tsx";
 import toast, { Toaster, ToastBar } from "react-hot-toast";
 
+import { PokemonTable, IPokemonList } from "../DB/database.config";
+
 export default function Home({ baseUrl }) {
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
@@ -42,6 +44,7 @@ export default function Home({ baseUrl }) {
         if (!data) return;
         setOffset(parseInt(data.results?.length));
         setPokemonList(data);
+        localStorage.setItem("pokemonlist", JSON.stringify(data));
         console.log(data);
 
         toast(
@@ -69,6 +72,31 @@ export default function Home({ baseUrl }) {
       });
     }
   }, [currPage, prevPage, wasLastList, pokemonList]);
+
+  const storePokemonList = async (obj) => {
+    const pkl: IPokemonList = {
+      id: 0,
+      count: obj?.count || 0,
+      next: obj?.next || 0,
+      previous: obj?.previous || 0,
+      results: obj?.results || [],
+    };
+
+    const id = await PokemonTable.put(pkl);
+    console.info(`Rows Stored : ${pkl.results.length} rows - ${id}`);
+  };
+
+  const getIndexedPokemonList = async () => {
+    const items = await PokemonTable.where("id").equals(0);
+    if (items?.results) {
+      if (pokemonList.results.length < items?.results?.length) {
+        setPokemonList(items);
+      }
+    } else {
+      storePokemonList(pokemonList);
+    }
+    setOffset(pokemonList.results.length);
+  };
 
   const fetchData = () => {
     setIsLoading(true);
