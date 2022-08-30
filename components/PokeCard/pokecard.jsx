@@ -1,12 +1,27 @@
 import { Card, Badge } from "react-bootstrap";
-import { getCardFormatByType, capitalizeFirstLetter } from "../../helpers/functions";
+import {
+  getCardFormatByType,
+  capitalizeFirstLetter,
+} from "../../helpers/functions";
 import { useEffect, useState } from "react";
 import propTypes from "prop-types";
 import PokeModal from "../PokeModal/pokemodal";
-
+import GoeFooter from "../anim/GoeFooter/goefooter";
+import { Colors } from "../../helpers/Utils";
+import {
+  GoeFilter,
+  GhostFilter,
+  WaterFilter,
+  PsychicFilter,
+  GroundFilter,
+  PoisonFilter,
+  NormalFilter,
+  BugFilter,
+  DarkFilter,
+} from "../../assets/svg/filters";
 
 const PokeCard = ({ pokemon }) => {
-  const { id, name, sprites, types } = pokemon;
+  const { id, name, sprites, types, species } = pokemon;
   const [modalShow, setModalShow] = useState(false);
   const [cardFormat, setCardFormat] = useState({
     formatedTypes: [
@@ -20,27 +35,144 @@ const PokeCard = ({ pokemon }) => {
     if (types) setCardFormat(getCardFormatByType(types));
   }, [pokemon]);
 
-  const makeAnimation = (type, i) => {
-    switch (type?.name) {
+  const makeAnimation = (types, i) => {
+    switch (types[0]?.name) {
+      case "normal":
+        return (
+          <GoeFooter
+            key={i}
+            bubbles={100}
+            bubblecolors={types.map((item) => Colors[item.name])}
+            size={6}
+            distance={20}
+            position={106}
+            time={4}
+            delay={0}
+            filter={{ type: "normal", svg: <NormalFilter /> }}
+          />
+        );
       case "fire":
         return (
-          <div key={i} className="burn">
-            <div className="flame"></div>
-            <div className="flame"></div>
-            <div className="flame"></div>
-            <div className="flame"></div>
-            <div className="flame"></div>
-            <div className="flame"></div>
-            <div className="flame"></div>
-            <div className="flame"></div>
-            <div className="flame"></div>
-            <div className="flame"></div>
-          </div>
+          <GoeFooter
+            key={i}
+            bubbles={100}
+            bubblecolors={types.map((item) => Colors[item.name])}
+            size={6}
+            distance={20}
+            position={106}
+            time={4}
+            delay={0}
+            filter={{ type: "goe", svg: <GoeFilter />, height: "1rem" }}
+          />
         );
       case "water":
-        return <div key={i} className="watereffect"></div>;
+        return (
+          <GoeFooter
+            key={i}
+            bubbles={100}
+            bubblecolors={types.map((item) => Colors[item.name])}
+            size={4}
+            distance={20}
+            position={106}
+            time={4}
+            delay={0}
+            filter={{ type: "water", svg: <WaterFilter /> }}
+          />
+        );
+      case "grass":
+        return <></>;
+      case "bug":
+        return (
+          <GoeFooter
+            key={i}
+            bubbles={100}
+            bubblecolors={types.map((item) => Colors[item.name])}
+            size={6}
+            distance={20}
+            position={106}
+            time={4}
+            delay={0}
+            filter={{ type: "bug", svg: <BugFilter fill="#fff" /> }}
+            opacity="1"
+          />
+        );
+      case "ground":
+        return (
+          <GoeFooter
+            key={i}
+            bubbles={100}
+            bubblecolors={types.map((item) => Colors[item.name])}
+            size={9}
+            distance={25}
+            position={106}
+            time={4}
+            delay={0}
+            filter={{ type: "ground", svg: <GroundFilter /> }}
+          />
+        );
       case "poison":
-        return <div key={i} className="poisoneffect"></div>;
+        return (
+          <GoeFooter
+            key={i}
+            bubbles={100}
+            bubblecolors={types.map((item) => Colors[item.name])}
+            size={5}
+            distance={20}
+            position={106}
+            time={4}
+            delay={0}
+            filter={{ type: "poison", svg: <PoisonFilter /> }}
+            opacity="0.5"
+          />
+        );
+      case "psychic":
+        return (
+          <GoeFooter
+            key={i}
+            bubbles={100}
+            bubblecolors={types.map((item) => Colors[item.name])}
+            size={5}
+            distance={25}
+            position={106}
+            time={4}
+            delay={0}
+            filter={{
+              type: "psychic",
+              svg: <PsychicFilter />,
+            }}
+            opacity="1"
+          />
+        );
+      case "ghost":
+        return (
+          <GoeFooter
+            key={i}
+            bubbles={100}
+            bubblecolors={types.map((item) => Colors[item.name])}
+            size={5}
+            distance={25}
+            position={106}
+            time={4}
+            delay={0}
+            filter={{ type: "ghost", svg: <GhostFilter /> }}
+            opacity="1"
+          />
+        );
+      case "dark":
+        return (
+          <GoeFooter
+            key={i}
+            bubbles={100}
+            bubblecolors={types.map((item) => Colors[item.name])}
+            size={5}
+            distance={25}
+            position={106}
+            time={4}
+            delay={0}
+            filter={{ type: "dark", svg: <DarkFilter /> }}
+            opacity="1"
+          />
+        );
     }
   };
 
@@ -53,9 +185,7 @@ const PokeCard = ({ pokemon }) => {
       >
         <Card.Header>
           {capitalizeFirstLetter(name)}
-          <Badge pill bg="danger">
-            {"#" + id}
-          </Badge>
+          <Badge bg="danger">{"#" + id}</Badge>
         </Card.Header>
         <div className="img-wrapper">
           <Card.Img
@@ -71,21 +201,24 @@ const PokeCard = ({ pokemon }) => {
           <Card.Subtitle className="mb-2 text-muted"></Card.Subtitle>
         </Card.Body>
         <div className="content">
-          {cardFormat?.formatedTypes?.map((poketype) => {
-            return (
-              <Badge
-                key={name + "_" + poketype?.name + "_" + poketype.type}
-                bg="none"
-                style={{ backgroundColor: poketype?.color || "light" }}
-              >
-                {poketype?.name}
-              </Badge>
-            );
-          })}
+          <div>
+            {cardFormat?.formatedTypes?.map((poketype) => {
+              return (
+                <Badge
+                  key={name + "_" + poketype?.name + "_" + poketype.type}
+                  bg="none"
+                  style={{ backgroundColor: poketype?.color || "light" }}
+                >
+                  {poketype?.name}
+                </Badge>
+              );
+            })}
+          </div>
+          <div className="pokecolor" style={{ color: species.color.name }}>
+            {species.color.name}
+          </div>
         </div>
-        {cardFormat?.formatedTypes?.map((poketype, i) =>
-          makeAnimation(poketype, i)
-        )}
+        {makeAnimation(cardFormat?.formatedTypes, 0)}
       </Card>
     );
   };

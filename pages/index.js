@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useRef, useState, useEffect, useCallback } from "react";
-import { Row, CloseButton, Stack } from "react-bootstrap";
+import { Row, CloseButton, Dropdown } from "react-bootstrap";
 import {
   formatPokemonName,
   roman_to_Int,
@@ -43,24 +43,34 @@ export default function Home({ baseUrl }) {
         setOffset(parseInt(data.results?.length));
         setPokemonList(data);
         console.log(data);
-        toast.success(`Rows retrieved ${data.results?.length}`, {
-          id: "rows",
-          icon: <img src="/pokeball.svg" width={30} height={30} />,
-          position: "top-center",
-        });
+
+        toast(
+          (t) => (
+            <span>
+              Get More <>Pokemons</>{" "}
+              <a
+                className="toastrefresh"
+                onClick={() => {
+                  setCurrPage(pokemonList.next);
+                  toast.dismiss("refresh");
+                }}
+              >
+                Refresh
+              </a>
+            </span>
+          ),
+          {
+            id: "refresh",
+            icon: <img src="/pokeball.svg" width={30} height={30} />,
+            position: "bottom-left",
+            duration: Infinity,
+          }
+        );
       });
     }
-
-    window.addEventListener("scroll", isScrolling);
-    return () => window.removeEventListener("scroll", isScrolling);
   }, [currPage, prevPage, wasLastList, pokemonList]);
 
   const fetchData = () => {
-    toast(`Fetching Data from Graph`, {
-      id: "fetch",
-      icon: <img src="/pokeball.svg" width={30} height={30} />,
-      position: "top-center",
-    });
     setIsLoading(true);
     return getPokemons({ limit: limit, offset: offset }).then((res) => {
       const response = {};
@@ -71,6 +81,12 @@ export default function Home({ baseUrl }) {
         setWasLastList(true);
         return;
       }
+
+      toast.success(`Rows retrieved ${list.results?.length}`, {
+        id: "rows",
+        icon: <img src="/pokeball.svg" width={30} height={30} />,
+        position: "top-center",
+      });
 
       setPrevPage(currPage);
 
@@ -85,37 +101,6 @@ export default function Home({ baseUrl }) {
 
       return response;
     });
-  };
-
-  const isScrolling = () => {
-    if (
-      window.innerHeight + document.documentElement.scrollTop !==
-      document.documentElement.offsetHeight
-    ) {
-      toast.dismiss("refresh");
-      return;
-    }
-    toast(
-      (t) => (
-        <span>
-          Get More <>Pokemons</>{" "}
-          <a
-            className="toastrefresh"
-            onClick={() => {
-              setCurrPage(pokemonList.next);
-              toast.dismiss("refresh");
-            }}
-          >
-            Refresh
-          </a>
-        </span>
-      ),
-      {
-        id: "refresh",
-        icon: <img src="/pokeball.svg" width={30} height={30} />,
-        position: "bottom-left",
-      }
-    );
   };
 
   const handleSelect = (e) => {
@@ -168,6 +153,46 @@ export default function Home({ baseUrl }) {
               });
             } else return item[search].toString();
           });
+        case "Color":
+          if (q !== "") {
+            return (
+              item?.species?.color?.name
+                .toString()
+                .toLowerCase()
+                .indexOf(q.toLocaleLowerCase()) > -1
+            );
+          } else return item.name.toString();
+        case "Type":
+          if (q !== "" && q.indexOf(",") == -1) {
+            return item.types.some((itemtype) => {
+              return (
+                itemtype?.type?.name
+                  .toString()
+                  .toLowerCase()
+                  .indexOf(q.toLocaleLowerCase()) > -1
+              );
+            });
+          } else if (q.indexOf(",") > -1) {
+            var qs = q.split(",");
+            if (qs[1])
+              return (
+                item.types[0]?.type?.name
+                  .toString()
+                  .toLowerCase()
+                  .indexOf(qs[0]) > -1 &&
+                item.types[1]?.type?.name
+                  .toString()
+                  .toLowerCase()
+                  .indexOf(qs[1]) > -1
+              );
+            else
+              return (
+                item.types[0]?.type?.name
+                  .toString()
+                  .toLowerCase()
+                  .indexOf(qs[0]) > -1
+              );
+          } else return item.name.toString();
       }
     });
     return filtered ? filtered : [];
@@ -176,7 +201,7 @@ export default function Home({ baseUrl }) {
   return (
     <div className="pokecon">
       <Head>
-        <meta charset="utf-8" />
+        <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="description" content="" />
         <title>Pokedex</title>
@@ -224,7 +249,7 @@ export default function Home({ baseUrl }) {
               <>
                 {icon}
                 {message}
-                {t.type !== "loading" && (
+                {t.type !== "loading" && t.type != "blank" && (
                   <CloseButton
                     onClick={() => toast.dismiss(t.id)}
                   ></CloseButton>

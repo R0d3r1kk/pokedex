@@ -12,6 +12,7 @@ import {
 } from "react-bootstrap";
 import propTypes from "prop-types";
 import { capitalizeFirstLetter } from "../../helpers/functions";
+import { Colors } from "../../helpers/Utils";
 
 const PokeTabs = ({ bgcolor, pokemon, initTabs, className }) => {
   const [tabKey, setTabKey] = useState("about");
@@ -22,6 +23,7 @@ const PokeTabs = ({ bgcolor, pokemon, initTabs, className }) => {
   useEffect(async () => {
     if (initTabs) {
       let megaName = `${pokemon?.species?.evolution_chain?.chain[2]?.name}-mega`;
+      setTabColor(Colors[pokemon?.types[0]?.type.name]);
       setMegaName(megaName);
       await fetchImage(megaName);
     }

@@ -56,8 +56,10 @@ const PokeNavbar = ({
               onSelect={onFilterSelect}
             >
               <Dropdown.Item eventKey="All">All</Dropdown.Item>
+              <Dropdown.Item eventKey="Type">By Type</Dropdown.Item>
               <Dropdown.Item eventKey="Generation">By Generation</Dropdown.Item>
               <Dropdown.Item eventKey="Version">By Version</Dropdown.Item>
+              <Dropdown.Item eventKey="Color">By Color</Dropdown.Item>
             </NavDropdown>
           </Nav>
           <Form className="d-flex">

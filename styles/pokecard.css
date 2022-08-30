@@ -1,13 +1,14 @@
 /*Card Styles*/
 .pokecard {
-  display: flex;
+  display: grid;
+  grid-template-rows: 1fr 10rem auto;
+  grid-template-areas: "main" "." "footer";
   height: 320px !important;
   width: 260px !important;
-  background-color: #212529 !important;
+  /* background-color: #212529 !important; */
   background-size: cover;
-  background-position: center;
   border-radius: 20px !important;
-  box-shadow: -1rem 0 3rem #000;
+  /* box-shadow: 0.1rem 0.1rem 1rem #000; */
   color: #fff;
   transition: 0.4s ease-out;
   position: relative;
@@ -15,13 +16,18 @@
   left: 0;
   overflow: hidden;
   cursor: pointer;
+  background: rgba(0, 0, 0, 0.6) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 1);
+  backdrop-filter: blur(10.6px);
+  -webkit-backdrop-filter: blur(10.6px);
+  border: 1px solid rgba(0, 0, 0, 0) !important;
 }
 .pokecard:after {
   content: "";
   background-image: url(https://icon-library.com/images/pokemon-desktop-icon/pokemon-desktop-icon-23.jpg);
   background-repeat: no-repeat;
   background-size: 10em;
-  filter: brightness(100%);
+  filter: brightness(0%);
   opacity: 0.2;
   position: absolute;
   transition: 0.4s ease-out;
@@ -32,7 +38,9 @@
   z-index: 0;
 }
 .pokecard:hover {
-  height: 350px !important;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  height: 360px !important;
   width: 260px !important;
   transform: translateY(-10px);
   transition: 0.4s ease-out;
@@ -61,6 +69,7 @@
   display: flex;
   justify-content: space-between;
   transition: 0.4s ease-out;
+  border-radius: 20px !important;
   z-index: 1;
 }
 
@@ -77,113 +86,127 @@
 }
 .pokecard .content {
   min-height: 25%;
-  background-color: #2d3034;
-  color: #000;
-  padding: 1.2rem 0 0 1.5rem;
-  border-radius: 30px;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 1.2rem 1rem 0 1.5rem;
+  border-radius: 20px;
   transform: translateY(-50px);
   transition: 0.4s ease-out;
   z-index: 1;
+  justify-content: space-between;
+  display: flex;
+}
+
+.pokecard .content .pokecolor {
+  font-size: 10pt;
+  font-weight: bold;
+  font-style: italic;
 }
 
 .water:hover {
-  background-position: 100%;
-  background-size: cover;
-  background-image: url("../assets/svg/water.svg");
-  z-index: 0;
+  background-position: 33% 200% !important;
+  background-size: 130% !important;
+  background-repeat: no-repeat !important;
+  background-image: url("../assets/svg/water.svg") !important;
+  z-index: 1;
 }
 
 .fire:hover {
-  background-position: -50%;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-image: url("../assets/svg/fire.svg");
-  z-index: 0;
+  background-position: -50% !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-image: url("../assets/svg/fire.svg") !important;
+  z-index: 1;
 }
 
 .grass:hover {
-  background-position: 10%;
-  background-size: 200%;
-  background-image: url("../assets/svg/grass.svg");
-  z-index: 0;
+  background-position: 10% !important;
+  background-size: 200% !important;
+  background-image: url("../assets/svg/grass.svg") !important;
+  z-index: 1;
 }
 
 .electric:hover {
-  background-position: -20%;
-  background-size: 120%;
-  background-image: url("../assets/svg/ray1.png");
+  background-position: -20% !important;
+  background-size: 120% !important;
+  background-repeat: no-repeat !important;
+  background-image: url("../assets/svg/ray1.png") !important;
 }
 
 .poison:hover {
-  background-position: 10%;
-  background-size: 50%;
-  background-image: url("../assets/svg/posion.svg");
+  background-position: 10% !important;
+  background-size: 50% !important;
+  background-image: url("../assets/svg/posion.svg") !important;
   z-index: 0;
 }
 
 .ground:hover {
-  background-position: 10%;
-  background-size: 200%;
-  background-image: url("../assets/svg/ground.svg");
+  background-position: 10% !important;
+  background-size: 200% !important;
+  background-image: url("../assets/svg/ground.svg") !important;
   z-index: 0;
 }
 
 .fairy:hover {
-  background-image: url("../assets/svg/fairy.svg");
+  background-image: url("../assets/svg/fairy.svg") !important;
   z-index: 0;
 }
 
 .psychic:hover {
-  background-size: 130%;
-  background-image: url("../assets/svg/psychic.svg");
+  background-size: 150% !important;
+  background-image: url("../assets/svg/psychic.svg") !important;
+  background-repeat: no-repeat !important;
   z-index: 0;
 }
 
 .rock:hover {
-  background-position: 40% 40%;
-  background-size: cover;
-  background-image: url("../assets/svg/rock.svg");
+  background-position: 40% 40% !important;
+  background-size: cover !important;
+  background-image: url("../assets/svg/rock.svg") !important;
   z-index: 0;
 }
 
 .ghost:hover {
-  background-image: url("../assets/svg/ghosts.svg");
+  background-image: url("../assets/svg/ghosts.svg") !important;
   z-index: 0;
 }
 
 .fighting:hover {
-  background-position: 37% 90%;
-  background-size: 150%;
-  background-image: url("../assets/svg/pows.png");
+  background-position: 37% 90% !important;
+  background-size: 150% !important;
+  background-repeat: no-repeat !important;
+  background-image: url("../assets/svg/pows.png") !important;
   z-index: 0;
 }
 
 .normal:hover {
-  background-image: url("../assets/svg/normal.png");
+  background-position: 0% 50% !important;
+  background-size: 100% !important;
+  background-repeat: no-repeat !important;
+  background-image: url("../assets/svg/normal.png") !important;
   z-index: 0;
 }
 
 .ice:hover {
-  background-repeat: no-repeat;
-  background-position: -150% -150%;
-  background-size: 90%;
-  background-image: url("../assets/svg/ice2.png");
+  background-repeat: no-repeat !important;
+  background-position: -150% -150% !important;
+  background-size: 90% !important;
+  background-image: url("../assets/svg/ice2.png") !important;
   z-index: 0;
 }
 
 .bug:hover {
-  background-repeat: no-repeat;
-  background-position: 85% -30%;
-  background-size: 150%;
-  /* background-image: url("../assets/svg/bug.png"); */
+  background-repeat: no-repeat !important;
+  background-position: 85% -30% !important;
+  background-size: 150% !important;
+  /* background-image: url("../assets/svg/bug.png") !important; */
   z-index: 0;
 }
 
 .dark:hover {
-  background-position: 70% 50%;
-  background-size: 200%;
-  background-repeat: no-repeat;
-  background-image: url("../assets/svg/dark.svg");
+  background-position: 70% 50% !important;
+  background-size: 200% !important;
+  background-repeat: no-repeat !important;
+  background-image: url("../assets/svg/dark.svg") !important;
   z-index: 0;
 }
 
