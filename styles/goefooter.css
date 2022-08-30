@@ -51,6 +51,10 @@
   flood-color: #4B6780;
 }
 
+#rockfilter_svg__filtercolor {
+  flood-color: #A07010;
+}
+
 @-webkit-keyframes bubble-size {
   0%,
   75% {

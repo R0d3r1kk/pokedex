@@ -18,6 +18,7 @@ import {
   NormalFilter,
   BugFilter,
   DarkFilter,
+  RockFilter,
 } from "../../assets/svg/filters";
 
 const PokeCard = ({ pokemon }) => {
@@ -70,7 +71,7 @@ const PokeCard = ({ pokemon }) => {
           <GoeFooter
             key={i}
             bubbles={100}
-            bubblecolors={types.map((item) => Colors[item.name])}
+            bubblecolors={[...types.map((item) => Colors[item.name]), "#fff"]}
             size={4}
             distance={20}
             position={106}
@@ -92,7 +93,7 @@ const PokeCard = ({ pokemon }) => {
             position={106}
             time={4}
             delay={0}
-            filter={{ type: "bug", svg: <BugFilter fill="#fff" /> }}
+            filter={{ type: "bug", svg: <BugFilter /> }}
             opacity="1"
           />
         );
@@ -108,6 +109,20 @@ const PokeCard = ({ pokemon }) => {
             time={4}
             delay={0}
             filter={{ type: "ground", svg: <GroundFilter /> }}
+          />
+        );
+      case "rock":
+        return (
+          <GoeFooter
+            key={i}
+            bubbles={100}
+            bubblecolors={types.map((item) => Colors[item.name])}
+            size={9}
+            distance={25}
+            position={106}
+            time={4}
+            delay={0}
+            filter={{ type: "rock", svg: <RockFilter /> }}
           />
         );
       case "poison":

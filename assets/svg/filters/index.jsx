@@ -7,3 +7,4 @@ export { default as PoisonFilter } from "./poisonfilter.svg";
 export { default as NormalFilter } from "./normalfilter.svg";
 export { default as BugFilter } from "./bugfilter.svg";
 export { default as DarkFilter } from "./darkfilter.svg";
+export { default as RockFilter } from "./rockfilter.svg";
