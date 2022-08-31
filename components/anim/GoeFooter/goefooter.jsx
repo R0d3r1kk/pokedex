@@ -10,15 +10,18 @@ const GoeFooter = (props) => {
   return (
     <div
       className="goefooter"
-      style={{ opacity: props.opacity ? props.opacity : "0.6" }}
+      style={{ opacity: props?.opacity ? props?.opacity : "0.6" }}
     >
       <div
         className="bubbles"
         style={{
-          "--footer-background": props?.bubblecolors[0],
-          height: props.filter.height ? props.filter.height || "1rem" : "0",
+          "--footer-background":
+            props.bubblecolors.length === 1
+              ? props?.bubblecolors[0]
+              : `linear-gradient(to right, ${props?.bubblecolors[0]}, ${props?.bubblecolors[1]})`,
+          height: props?.filter?.height ? props.filter.height || "1rem" : "0",
           filter: props?.filter
-            ? `url('#${props.filter.type}filter_svg__blob')`
+            ? `url('#${props?.filter?.type}filter_svg__blob')`
             : "url('#blob')",
         }}
       >
@@ -49,7 +52,7 @@ const GoeFooter = (props) => {
           ></div>
         ))}
       </div>
-      {props?.filter.svg}
+      {props?.filter?.svg}
     </div>
   );
 };

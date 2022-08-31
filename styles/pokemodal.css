@@ -1,3 +1,7 @@
+.modal-title{
+    z-index: 2;
+}
+
 .modal-content{
     background-color: #1D2024 !important;
 }
@@ -21,6 +25,7 @@
 .modal-header button{
     background: none;
     border: none;
+    z-index: 2;
 }
 
 .modal-header button:hover{
@@ -92,3 +97,102 @@
     z-index: 0;
     filter: blur(2px);
   }
+
+  /*animation*/
+  .modal-header .goefooter {
+    z-index: 1;
+    background-color: transparent;
+    display: grid;
+    position: absolute;
+    width: 100%;
+    top:0;
+    left: 0;
+    grid-area: footer;
+    min-height: 40%;
+    /* opacity: 0.6; */
+  }
+  
+  .modal-header .goefooter .bubbles {
+    position: absolute;
+    bottom: -35px;
+    left: -11px;
+    right: -11px;
+    background: var(--footer-background);
+    /* filter: url("#goefilter_svg__blob"); */
+    z-index: 0;
+  }
+  .modal-header .goefooter .bubbles .bubble {
+    position: absolute;
+    left: var(--position, 50%);
+    background: var(--footer-bubble-background);
+    border-radius: 100%;
+    -webkit-animation: bubble-size var(--time, 4s) ease-in infinite
+        var(--delay, 0s),
+      bubble-move var(--time, 4s) ease-in infinite var(--delay, 0s);
+    animation: bubble-size var(--time, 4s) ease-in infinite var(--delay, 0s),
+      bubble-move var(--time, 4s) ease-in infinite var(--delay, 0s);
+    transform: translate(-50%, 100%);
+  }
+  
+  #darkfilter_svg__filtercolor {
+    flood-color: #3a2d44;
+  }
+  #bugfilter_svg__filtercolor {
+    flood-color: #8fd594;
+  }
+  #poisonfilter_svg__filtercolor {
+    flood-color: #Bc6aec;
+  }
+  
+  #groundfilter_svg__filtercolor {
+    lighting-color: #Deb15a;
+  }
+  
+  #ghostfilter_svg__filtercolor {
+    flood-color: #4B6780;
+  }
+  
+  #rockfilter_svg__filtercolor {
+    flood-color: #A07010;
+  }
+  
+  @-webkit-keyframes bubble-size {
+    0%,
+    75% {
+      width: var(--size, 4rem);
+      height: var(--size, 4rem);
+    }
+    100% {
+      width: 0rem;
+      height: 0rem;
+    }
+  }
+  
+  @keyframes bubble-size {
+    0%,
+    75% {
+      width: var(--size, 4rem);
+      height: var(--size, 4rem);
+    }
+    100% {
+      width: 0rem;
+      height: 0rem;
+    }
+  }
+  @-webkit-keyframes bubble-move {
+    0% {
+      bottom: -4rem;
+    }
+    100% {
+      bottom: var(--distance, 10rem);
+    }
+  }
+  @keyframes bubble-move {
+    0% {
+      bottom: -4rem;
+    }
+    100% {
+      bottom: var(--distance, 10rem);
+    }
+  }
+  

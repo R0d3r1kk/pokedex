@@ -20,7 +20,7 @@ const PokeNavbar = ({
   onSearchChange,
 }) => {
   const filterRef = useRef();
-  const [search, setSearch] = useState();
+  const [search, setSearch] = useState("");
   useEffect(() => {
     let delayTimeOutFunction;
 

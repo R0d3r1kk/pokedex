@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import { Colors } from "../../helpers/Utils";
 import PokeTabs from "../PokeTabs/poketabs";
 
+import GoeFooter from "../anim/GoeFooter/goefooter";
+
 const PokeModal = (props) => {
   const [pokemon, setPokemon] = useState({
     details: { id: 0 },
@@ -28,9 +30,14 @@ const PokeModal = (props) => {
 
         setPokemon(props.pokemon);
         console.log(props.pokemon);
+
         setFinished(true);
       }
     }
+
+    return () => {
+      if (filter) props.animoptions.filter = filter;
+    };
   }, [opened]);
 
   const loadGif = () => {
@@ -103,6 +110,7 @@ const PokeModal = (props) => {
           className="pokeGif"
         />
         <Button onClick={props.onHide}>Close</Button>
+        <GoeFooter {...props?.animoptions}></GoeFooter>
       </Modal.Header>
 
       <PokeTabs

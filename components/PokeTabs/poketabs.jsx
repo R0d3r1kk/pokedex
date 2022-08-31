@@ -123,8 +123,17 @@ const PokeTabs = ({ bgcolor, pokemon, initTabs, className }) => {
         </Navbar>
         <Row className="tabsbody">
           <Tab.Content>
-            <Tab.Pane active={tabKey == "about"} eventKey="about">
-              About
+            <Tab.Pane
+              active={tabKey == "about"}
+              className="about"
+              eventKey="about"
+            >
+              {pokemon?.abilities?.map((item) => (
+                <Row key={item.slot}>
+                  <h4>{item.ability.name}</h4>{" "}
+                  <p>{item.ability.effect[1].effect}</p>
+                </Row>
+              ))}
             </Tab.Pane>
             <Tab.Pane
               active={tabKey == "stats"}

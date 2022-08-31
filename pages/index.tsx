@@ -19,7 +19,7 @@ import Dexie from "dexie";
 import { useLiveQuery } from "dexie-react-hooks";
 import { IPokemonList, db } from "../DB/database.config";
 
-export default function Home({ baseUrl }) {
+export default function Home() {
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
   const [pokemonList, setPokemonList] = useState({
@@ -172,7 +172,7 @@ export default function Home({ baseUrl }) {
                 item[search].toString().toLowerCase().indexOf(q.toLowerCase()) >
                 -1
               );
-            } else return item[search].toString();
+            } else return item[search]?.toString();
           });
 
         case "Generation":
@@ -192,7 +192,7 @@ export default function Home({ baseUrl }) {
                   .indexOf(q.toString()) > -1
               );
             }
-          } else return item.name.toString();
+          } else return item?.name?.toString();
 
         case "Version":
           return searchParam.some((search) => {
@@ -205,7 +205,7 @@ export default function Home({ baseUrl }) {
                       .indexOf(q.toLocaleLowerCase()) > -1
                   : false;
               });
-            } else return item[search].toString();
+            } else return item[search]?.toString();
           });
         case "Color":
           if (q !== "") {
@@ -215,7 +215,7 @@ export default function Home({ baseUrl }) {
                 .toLowerCase()
                 .indexOf(q.toLocaleLowerCase()) > -1
             );
-          } else return item.name.toString();
+          } else return item?.name?.toString();
         case "Type":
           if (q !== "" && q.indexOf(",") == -1) {
             return item.types.some((itemtype) => {
@@ -246,7 +246,7 @@ export default function Home({ baseUrl }) {
                   .toLowerCase()
                   .indexOf(qs[0]) > -1
               );
-          } else return item.name.toString();
+          } else return item?.name?.toString();
       }
     });
     return filtered ? filtered : [];
@@ -290,7 +290,32 @@ export default function Home({ baseUrl }) {
               key={`${res?.name}-${res?.id}`}
               pokemon={res}
               onClick={() => setModalShow(true)}
-              url={baseUrl}
+              modalshowevent={(showing) => {
+                if (showing) toast.dismiss("refresh");
+                else
+                  toast(
+                    (t) => (
+                      <span>
+                        Get More <>Pokemons</>{" "}
+                        <a
+                          className="toastrefresh"
+                          onClick={() => {
+                            setCurrPage(pokemonList.next);
+                            toast.dismiss("refresh");
+                          }}
+                        >
+                          Refresh
+                        </a>
+                      </span>
+                    ),
+                    {
+                      id: "refresh",
+                      icon: <img src="/pokeball.svg" width={30} height={30} />,
+                      position: "bottom-left",
+                      duration: Infinity,
+                    }
+                  );
+              }}
             />
           );
         })}
@@ -314,14 +339,4 @@ export default function Home({ baseUrl }) {
       </Toaster>
     </div>
   );
-}
-
-export async function getServerSideProps(context) {
-  const baseUrl = "https://pokeapi.co/api/v2/pokemon/";
-
-  return {
-    props: {
-      baseUrl,
-    },
-  };
 }
