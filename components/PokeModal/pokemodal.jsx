@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal, Button } from "react-bootstrap";
-import { capitalizeFirstLetter } from "../../helpers/functions";
+import { capitalizeFirstLetter } from "../../helpers/Functions";
 import { useState, useEffect } from "react";
 import { Colors } from "../../helpers/Utils";
 import PokeTabs from "../PokeTabs/poketabs";

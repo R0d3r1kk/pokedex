@@ -11,7 +11,7 @@ import {
   Card,
 } from "react-bootstrap";
 import propTypes from "prop-types";
-import { capitalizeFirstLetter } from "../../helpers/functions";
+import { capitalizeFirstLetter } from "../../helpers/Functions";
 import { Colors } from "../../helpers/Utils";
 
 const PokeTabs = ({ bgcolor, pokemon, initTabs, className }) => {

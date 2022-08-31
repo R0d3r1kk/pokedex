@@ -2,7 +2,7 @@ import { Card, Badge } from "react-bootstrap";
 import {
   getCardFormatByType,
   capitalizeFirstLetter,
-} from "../../helpers/functions";
+} from "../../helpers/Functions";
 import { useEffect, useState } from "react";
 import propTypes from "prop-types";
 import PokeModal from "../PokeModal/pokemodal";

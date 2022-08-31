@@ -6,7 +6,7 @@ import {
   roman_to_Int,
   is_numeric,
   DeepEqual,
-} from "../helpers/functions";
+} from "../helpers/Functions";
 import {
   BubbleContainer,
   PokeCard,
