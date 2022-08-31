@@ -17,7 +17,7 @@ import { getPokemons } from "../helpers/GraphHelper.tsx";
 import toast, { Toaster, ToastBar } from "react-hot-toast";
 import Dexie from "dexie";
 import { useLiveQuery } from "dexie-react-hooks";
-import { IPokemonList, db } from "../DB/database.config";
+import { db } from "../DB/database.config";
 
 export default function Home() {
   const [limit, setLimit] = useState(10);
@@ -143,7 +143,7 @@ export default function Home() {
   };
 
   const storePokemonList = async (obj) => {
-    const pkl: IPokemonList = {
+    const pkl = {
       id: 0,
       count: obj?.count || 0,
       next: obj?.next || 0,
