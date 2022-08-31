@@ -5,6 +5,7 @@ import {
   formatPokemonName,
   roman_to_Int,
   is_numeric,
+  DeepEqual,
 } from "../helpers/functions";
 import {
   BubbleContainer,
@@ -14,8 +15,9 @@ import {
 } from "../components";
 import { getPokemons } from "../helpers/GraphHelper.tsx";
 import toast, { Toaster, ToastBar } from "react-hot-toast";
-
-import { PokemonTable, IPokemonList } from "../DB/database.config";
+import Dexie from "dexie";
+import { useLiveQuery } from "dexie-react-hooks";
+import { IPokemonList, db } from "../DB/database.config";
 
 export default function Home({ baseUrl }) {
   const [limit, setLimit] = useState(10);
@@ -23,83 +25,86 @@ export default function Home({ baseUrl }) {
   const [pokemonList, setPokemonList] = useState({
     results: [],
   });
-  const [currPage, setCurrPage] = useState(0); // storing current page number
-  const [prevPage, setPrevPage] = useState(-1); // storing prev page number
-  const [wasLastList, setWasLastList] = useState(false); // setting a flag to know the last list
-  const [isLoading, setIsLoading] = useState(false); // setting a flag to know the last list
-  //     set search query to empty string
+  const [currPage, setCurrPage] = useState(0);
+  const [prevPage, setPrevPage] = useState(-1);
+  const [wasLastList, setWasLastList] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [q, setQ] = useState("");
-  //     set search parameters
-  //     we only what to search countries by capital and name
-  //     this list can be longer if you want
-  //     you can search countries even by their population
-  // just add it to this array
   const [searchParam] = useState(["name", "id"]);
   const [filterParam, setFilterParam] = useState("All");
 
   useEffect(() => {
     if (!wasLastList && prevPage !== currPage) {
-      fetchData().then((data) => {
-        setIsLoading(false);
-        if (!data) return;
-        setOffset(parseInt(data.results?.length));
-        setPokemonList(data);
-        localStorage.setItem("pokemonlist", JSON.stringify(data));
-        console.log(data);
-
-        toast(
-          (t) => (
-            <span>
-              Get More <>Pokemons</>{" "}
-              <a
-                className="toastrefresh"
-                onClick={() => {
-                  setCurrPage(pokemonList.next);
-                  toast.dismiss("refresh");
-                }}
-              >
-                Refresh
-              </a>
-            </span>
-          ),
-          {
-            id: "refresh",
-            icon: <img src="/pokeball.svg" width={30} height={30} />,
-            position: "bottom-left",
-            duration: Infinity,
-          }
-        );
-      });
+      setIsLoading(true);
+      fetchData().then((data) => populateData(data));
     }
   }, [currPage, prevPage, wasLastList, pokemonList]);
 
-  const storePokemonList = async (obj) => {
-    const pkl: IPokemonList = {
-      id: 0,
-      count: obj?.count || 0,
-      next: obj?.next || 0,
-      previous: obj?.previous || 0,
-      results: obj?.results || [],
-    };
-
-    const id = await PokemonTable.put(pkl);
-    console.info(`Rows Stored : ${pkl.results.length} rows - ${id}`);
-  };
-
-  const getIndexedPokemonList = async () => {
-    const items = await PokemonTable.where("id").equals(0);
-    if (items?.results) {
-      if (pokemonList.results.length < items?.results?.length) {
-        setPokemonList(items);
-      }
-    } else {
-      storePokemonList(pokemonList);
+  useEffect(() => {
+    if (pokemonList.limit && pokemonList.limit < limit) {
+      setIsLoading(true);
+      getGraphQlItems().then((data) => populateData(data));
     }
-    setOffset(pokemonList.results.length);
+  }, [limit]);
+
+  const populateData = (data) => {
+    setIsLoading(false);
+    if (!data) return;
+    setOffset(parseInt(data.results?.length));
+    setPokemonList(data);
+
+    console.log("data", data);
+
+    toast(
+      (t) => (
+        <span>
+          Get More <>Pokemons</>{" "}
+          <a
+            className="toastrefresh"
+            onClick={() => {
+              setCurrPage(pokemonList.next);
+              toast.dismiss("refresh");
+            }}
+          >
+            Refresh
+          </a>
+        </span>
+      ),
+      {
+        id: "refresh",
+        icon: <img src="/pokeball.svg" width={30} height={30} />,
+        position: "bottom-left",
+        duration: Infinity,
+      }
+    );
   };
 
-  const fetchData = () => {
-    setIsLoading(true);
+  const fetchData = async () => {
+    if (pokemonList?.limit) return getGraphQlItems();
+    else
+      return getLocalItems().catch((e) => {
+        return getGraphQlItems();
+      });
+  };
+
+  const getLocalItems = async () => {
+    return db.pokemonlist
+      .where("id")
+      .equals(0)
+      .first()
+      .then((item) => {
+        if (!item.results.length) {
+          setWasLastList(true);
+          return;
+        }
+        setLimit(item.limit);
+        setPrevPage(currPage);
+
+        return item;
+      });
+  };
+
+  const getGraphQlItems = async () => {
     return getPokemons({ limit: limit, offset: offset }).then((res) => {
       const response = {};
       if (!res) return;
@@ -121,14 +126,35 @@ export default function Home({ baseUrl }) {
       if (list && pokemonList) {
         response = {
           count: list.pagination.item.count,
-          next: currPage + 1,
-          previuos: currPage - 1,
+          next: currPage || 0 + 1,
+          previuos: currPage || 0 - 1,
           results: [...pokemonList.results, ...list.results],
         };
       }
 
+      storePokemonList({
+        ...response,
+        date_created: Date().toLocaleString(),
+        limit: limit,
+      });
+
       return response;
     });
+  };
+
+  const storePokemonList = async (obj) => {
+    const pkl: IPokemonList = {
+      id: 0,
+      count: obj?.count || 0,
+      next: obj?.next || 0,
+      previous: obj?.previous || 0,
+      limit: limit,
+      results: obj?.results || [],
+      date_created: Date().toLocaleString(),
+    };
+
+    const id = await db.pokemonlist.put(pkl);
+    console.info(`Rows Stored : ${pkl.results.length} rows - id ${id}`);
   };
 
   const handleSelect = (e) => {
