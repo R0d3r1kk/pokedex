@@ -27,59 +27,14 @@
     border: none;
     z-index: 2;
     position: relative;
-    border-radius: 50% 50% 50% 49%;
-    width: 80px;
-    height: 80px;    
-    transition: all 1s ease-in-out;
+    width: 80px; 
+    transition: all .3s ease-in-out;
 }
 
 .modal-header button:hover{
     background: none;
     border: none;
     box-shadow: inset #2d3034 0px 2px 2px 1px; 
-}
-
-.modal-header button::after{
-  max-height: 0;
-  transition: all 1s ease-in-out;
-  top:50%;
-  content: "Close";
-  box-shadow: inset #2d3034 0px 2px 2px 1px;
-  transform: translateX(-50%);
-  width: 100%;
-  position: absolute;
-  z-index: -2;
-  height: 0;
-  border-radius: 3px;
-}
-
-.modal-header button:hover::after {
-  height: 23px;
-  max-height: 25px;
-  top:40%;
-}
-
-.modal-header button::before{
-  -webkit-transition: transform 1.2s;
-  -moz-transition: transform 1.2s;
-  -ms-transition: transform 1.2s;
-  -o-transition: transform 1.2s;
-  transition: transform 1.2s;
-  content: "";
-  
-  border-radius: 100%;
-  transform: translate(-50%, -40%);
-  width: 20px;
-  height: 20px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: -1;
-}
-
-.modal-header button:hover::before {
-  box-shadow: inset #2d3034 0px 2px 2px 1px;
-  transform: translate(-50%, 50%);
 }
 
 .modal-body{
@@ -115,6 +70,7 @@
     padding: 0 15px;
     font-size: 1rem;
     position: relative;
+    transition: all .3s ease-in-out;
 }
 .chip:hover{
     cursor: pointer;
