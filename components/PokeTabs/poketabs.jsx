@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Tab,
   Row,
@@ -13,12 +13,94 @@ import {
 import propTypes from "prop-types";
 import { capitalizeFirstLetter } from "../../helpers/Functions";
 import { Colors } from "../../helpers/Utils";
+import { usePagination, useTable } from "react-table";
+
 
 const PokeTabs = ({ bgcolor, pokemon, initTabs, className }) => {
   const [tabKey, setTabKey] = useState("about");
   const [tabColor, setTabColor] = useState();
   const [hasMega, setHasMega] = useState(false);
   const [megaName, setMegaName] = useState();
+  const [data, setData] = useState([]);
+  const columns = useMemo(
+    () => [
+      {
+        Header: "#",
+        accessor: "idx", // accessor is the "key" in the data
+      },
+      {
+        Header: "Id",
+        accessor: "id", // accessor is the "key" in the data
+      },
+      {
+        Header: "Move",
+        accessor: "name",
+      },
+      {
+        Header: "Level",
+        accessor: "level",
+      },
+      {
+        Header: "Accuracy",
+        accessor: "acc",
+      },
+      {
+        Header: "Power",
+        accessor: "power",
+      },
+      {
+        Header: "PP",
+        accessor: "pp",
+      },
+      {
+        Header: "Type",
+        accessor: "type",
+      },
+    ],
+    []
+  );
+
+  useEffect(() => {
+    if (pokemon.moves != undefined) {
+      const data = pokemon.moves.map((mv, i) => {
+        return {
+          idx: (i + 1),
+          id: mv.id,
+          level: mv.level,
+          name: mv.move.name,
+          acc: mv.move.accuracy,
+          power: mv.move.power,
+          pp: mv.move.pp,
+          type: mv.move.type !== undefined ? mv.move.type.name : "",
+        };
+      });
+
+      setData(data);
+    }
+  }, [pokemon.moves]);
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    prepareRow,
+    page, // Instead of using 'rows', we'll use page,
+    // which has only the rows for the active page
+
+    // The rest of these things are super handy, too ;)
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    pageCount,
+    gotoPage,
+    nextPage,
+    previousPage,
+    setPageSize,
+    state: { pageIndex, pageSize },
+  } = useTable(
+    { columns, data, initialState: { pageIndex: 0, pageSize: 10 } },
+    usePagination
+  );
 
   useEffect(async () => {
     if (initTabs) {
@@ -102,6 +184,112 @@ const PokeTabs = ({ bgcolor, pokemon, initTabs, className }) => {
     };
   };
 
+  const MVTable = () => {
+    return (
+      <table className="mvtable" {...getTableProps()}>
+        <thead>
+          {
+            // Loop over the header rows
+            headerGroups.map((headerGroup) => (
+              // Apply the header row props
+              <tr {...headerGroup.getHeaderGroupProps()}>
+                {
+                  // Loop over the headers in each row
+                  headerGroup.headers.map((column) => (
+                    // Apply the header cell props
+                    <th {...column.getHeaderProps()}>
+                      {
+                        // Render the header
+                        column.render("Header")
+                      }
+                    </th>
+                  ))
+                }
+              </tr>
+            ))
+          }
+        </thead>
+        <tbody {...getTableBodyProps()}>
+          {
+            // Loop over the table rows
+            page.map((row) => {
+              // Prepare the row for display
+              prepareRow(row);
+              return (
+                // Apply the row props
+                <tr {...row.getRowProps()}>
+                  {
+                    // Loop over the rows cells
+                    row.cells.map((cell) => {
+                      // Apply the cell props
+                      return (
+                        <td {...cell.getCellProps()}>
+                          {
+                            // Render the cell contents
+                            cell.render("Cell")
+                          }
+                        </td>
+                      );
+                    })
+                  }
+                </tr>
+              );
+            })
+          }
+        </tbody>
+      </table>
+    );
+  };
+
+  const MVTableControls = () => {
+    return (
+      <div className="pagination">
+        <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+          {"<<"}
+        </button>{" "}
+        <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+          {"<"}
+        </button>{" "}
+        <button onClick={() => nextPage()} disabled={!canNextPage}>
+          {">"}
+        </button>{" "}
+        <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+          {">>"}
+        </button>{" "}
+        <span>
+          Page{" "}
+          <strong>
+            {pageIndex + 1} of {pageOptions.length}
+          </strong>{" "}
+        </span>
+        <span>
+          | Go to page:{" "}
+          <input
+            type="number"
+            defaultValue={pageIndex + 1}
+            onChange={(e) => {
+              const page = e.target.value ? Number(e.target.value) - 1 : 0;
+              gotoPage(page);
+            }}
+            style={{ width: "100px" }}
+          />
+        </span>{" "}
+        {/* <select
+          value={pageSize}
+          onChange={(e) => {
+            setPageSize(Number(e.target.value));
+          }}
+        >
+          {[10, 20, 30, 40, 50].map((pageSize) => (
+            <option key={pageSize} value={pageSize}>
+              Show {pageSize}
+            </option>
+          ))}
+        </select> */}
+      </div>
+    );
+  };
+
   return (
     <div
       className={`tabsContainer ${className}`}
@@ -134,6 +322,18 @@ const PokeTabs = ({ bgcolor, pokemon, initTabs, className }) => {
                   <p>{item.ability.effect[1].effect}</p>
                 </Row>
               ))}
+               <Row>
+                <h4>Generation</h4>
+                <p>{pokemon?.species?.generation.name}</p>
+              </Row>
+              <Row>
+                <h4>Habitat</h4>
+                <p>{pokemon?.species?.habitat.name}</p>
+              </Row>
+              <Row>
+                <h4>Color</h4>
+                <p>{pokemon?.species?.color.name}</p>
+              </Row>
             </Tab.Pane>
             <Tab.Pane
               active={tabKey == "stats"}
@@ -208,8 +408,13 @@ const PokeTabs = ({ bgcolor, pokemon, initTabs, className }) => {
                 )}
               </Row>
             </Tab.Pane>
-            <Tab.Pane active={tabKey == "moves"} eventKey="moves">
-              Moves
+            <Tab.Pane
+              active={tabKey == "moves"}
+              className="moves"
+              eventKey="moves"
+            >
+              <MVTable />
+              <MVTableControls />
             </Tab.Pane>
           </Tab.Content>
         </Row>

@@ -146,7 +146,67 @@
     align-items: center;
 }
 
-.about{
-    overflow: scroll;
-    max-height: 80%;
+.about, .moves{
+    overflow-y:  scroll;
+    overflow-x: hidden;
+    height: 70%;
+    max-height: 70%;
+    width: 97vw;
 }
+
+.mvtable {
+    table-layout: fixed;
+    border-collapse: collapse;
+    width: 100%;
+    text-align: left;
+    overflow: hidden;
+  }
+  .mvtable thead tr{
+    position: fixed;
+    display: flex;
+    justify-content: space-between;
+    top: 1.5em;
+    width: 96vw;
+  }
+
+  .mvtable thead th{
+    width: 14%;
+  }
+
+  .mvtable tbody {
+    padding: 0 1em;
+  }
+  .mvtable tr:not(:last-child) {
+    border-bottom: 1px solid #464c59;
+  }
+  .mvtable tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  .mvtable thead tr {
+    border-bottom: 1px solid #464c59;
+  }
+  .mvtable thead th {
+    padding: 4em 1em 1em;
+  }
+  .mvtable th, .mvtable td {
+    padding: 0.6em 1em;
+    word-break: break-all;
+  }
+  
+  ::-moz-selection {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  ::selection {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .pagination{
+    position: fixed;
+    bottom:2em;
+    right: 1.5em;
+    padding: 0.5rem;
+    z-index: 0;
+  }
