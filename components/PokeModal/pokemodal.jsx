@@ -37,7 +37,7 @@ const PokeModal = (props) => {
     return () => {
       if (filter) props.animoptions.filter = filter;
     };
-  }, [opened]);
+  }, [opened, isFinished]);
 
   const loadGif = () => {
     if (opened) {

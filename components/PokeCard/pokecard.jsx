@@ -38,10 +38,12 @@ const PokeCard = ({ pokemon, modalshowevent }) => {
     if (types) {
       const format = getCardFormatByType(types);
       setCardFormat(format);
-      const ftypes = format.formatedTypes;
-      getOptions(ftypes);
+      if (animOptions === undefined) {
+        const ftypes = format.formatedTypes;
+        getOptions(ftypes);
+      }
     }
-  }, [pokemon]);
+  }, [pokemon, animOptions]);
 
   const getOptions = (ftypes) => {
     const _type = ftypes[0].name;
@@ -166,10 +168,7 @@ const PokeCard = ({ pokemon, modalshowevent }) => {
           <Badge bg="danger">{"#" + id}</Badge>
         </Card.Header>
         <div className="img-wrapper">
-          <Card.Img
-            variant="top"
-            src={Pokeapi.getPokemonImg(id)}
-          />
+          <Card.Img variant="top" src={Pokeapi.getPokemonImg(id)} />
         </div>
         <Card.Body>
           <Card.Title></Card.Title>
@@ -207,7 +206,7 @@ const PokeCard = ({ pokemon, modalshowevent }) => {
           show={modalShow}
           fullscreen={true}
           onHide={() => {
-            getOptions(cardFormat?.formatedTypes);
+            //getOptions(cardFormat?.formatedTypes);
             setModalShow(false);
             modalshowevent(false);
           }}

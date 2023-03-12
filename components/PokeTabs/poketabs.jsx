@@ -13,8 +13,7 @@ import {
 import propTypes from "prop-types";
 import { capitalizeFirstLetter } from "../../helpers/Functions";
 import { Colors } from "../../helpers/Utils";
-import { usePagination, useTable } from "react-table";
-
+import { usePagination, useTable, useSortBy } from "react-table";
 
 const PokeTabs = ({ bgcolor, pokemon, initTabs, className }) => {
   const [tabKey, setTabKey] = useState("about");
@@ -64,7 +63,7 @@ const PokeTabs = ({ bgcolor, pokemon, initTabs, className }) => {
     if (pokemon.moves != undefined) {
       const data = pokemon.moves.map((mv, i) => {
         return {
-          idx: (i + 1),
+          idx: i + 1,
           id: mv.id,
           level: mv.level,
           name: mv.move.name,
@@ -84,6 +83,7 @@ const PokeTabs = ({ bgcolor, pokemon, initTabs, className }) => {
     getTableBodyProps,
     headerGroups,
     prepareRow,
+    rows,
     page, // Instead of using 'rows', we'll use page,
     // which has only the rows for the active page
 
@@ -99,6 +99,7 @@ const PokeTabs = ({ bgcolor, pokemon, initTabs, className }) => {
     state: { pageIndex, pageSize },
   } = useTable(
     { columns, data, initialState: { pageIndex: 0, pageSize: 10 } },
+    useSortBy,
     usePagination
   );
 
@@ -197,10 +198,21 @@ const PokeTabs = ({ bgcolor, pokemon, initTabs, className }) => {
                   // Loop over the headers in each row
                   headerGroup.headers.map((column) => (
                     // Apply the header cell props
-                    <th {...column.getHeaderProps()}>
+                    <th
+                      {...column.getHeaderProps(column.getSortByToggleProps())}
+                    >
                       {
                         // Render the header
                         column.render("Header")
+                      }
+                      {
+                        <span>
+                          {column.isSorted
+                            ? column.isSortedDesc
+                              ? " 🔽"
+                              : " 🔼"
+                            : ""}
+                        </span>
                       }
                     </th>
                   ))
@@ -274,6 +286,7 @@ const PokeTabs = ({ bgcolor, pokemon, initTabs, className }) => {
             style={{ width: "100px" }}
           />
         </span>{" "}
+        <span>{rows.length} rows</span>
         {/* <select
           value={pageSize}
           onChange={(e) => {
@@ -322,7 +335,7 @@ const PokeTabs = ({ bgcolor, pokemon, initTabs, className }) => {
                   <p>{item.ability.effect[1].effect}</p>
                 </Row>
               ))}
-               <Row>
+              <Row>
                 <h4>Generation</h4>
                 <p>{pokemon?.species?.generation.name}</p>
               </Row>
