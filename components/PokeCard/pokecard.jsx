@@ -20,6 +20,7 @@ import {
   DarkFilter,
   RockFilter,
 } from "../../assets/svg/filters";
+import { Pokeapi } from "../../helpers/Utils";
 
 const PokeCard = ({ pokemon, modalshowevent }) => {
   const { id, name, sprites, types, species } = pokemon;
@@ -167,10 +168,7 @@ const PokeCard = ({ pokemon, modalshowevent }) => {
         <div className="img-wrapper">
           <Card.Img
             variant="top"
-            src={
-              JSON.parse(sprites[0].sprites).other["official-artwork"]
-                .front_default
-            }
+            src={Pokeapi.getPokemonImg(id)}
           />
         </div>
         <Card.Body>
