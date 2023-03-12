@@ -18,3 +18,12 @@ export const Colors = {
   steel: "#AAC3CF",
   dark: "#3A2D44",
 };
+
+export const Pokeapi = {
+  imgsBaseUrl:
+    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/",
+  getPokemonImg: (id) => {
+    return Pokeapi.imgsBaseUrl + id + ".png";
+  },
+};
+

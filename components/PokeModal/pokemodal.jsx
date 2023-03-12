@@ -109,7 +109,7 @@ const PokeModal = (props) => {
           }}
           className="pokeGif"
         />
-        <Button onClick={props.onHide}>Close</Button>
+        <Button onClick={props.onHide}></Button>
         <GoeFooter {...props?.animoptions}></GoeFooter>
       </Modal.Header>
 
