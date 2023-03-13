@@ -39,11 +39,6 @@
   z-index: 0;
 }
 .pokecard:hover {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  height: 360px !important;
-  width: 260px !important;
-  transform: translateY(-10px);
   transition: 0.4s ease-out;
 }
 .pokecard:hover::after {
