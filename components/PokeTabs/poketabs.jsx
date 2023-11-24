@@ -12,7 +12,7 @@ import {
 } from "react-bootstrap";
 import propTypes from "prop-types";
 import { capitalizeFirstLetter } from "../../helpers/Functions";
-import { Colors } from "../../helpers/Utils";
+import { Colors, PokeUrl } from "../../helpers/Utils";
 import { usePagination, useTable, useSortBy } from "react-table";
 
 const PokeTabs = ({ bgcolor, pokemon, initTabs, className }) => {
@@ -332,20 +332,20 @@ const PokeTabs = ({ bgcolor, pokemon, initTabs, className }) => {
               {pokemon?.abilities?.map((item) => (
                 <Row key={item.slot}>
                   <h4>{item.ability.name}</h4>{" "}
-                  <p>{item.ability.effect[1].effect}</p>
+                  <p>{item.ability?.effect[1]?.effect}</p>
                 </Row>
               ))}
               <Row>
                 <h4>Generation</h4>
-                <p>{pokemon?.species?.generation.name}</p>
+                <p>{pokemon?.species?.generation?.name}</p>
               </Row>
               <Row>
                 <h4>Habitat</h4>
-                <p>{pokemon?.species?.habitat.name}</p>
+                <p>{pokemon?.species?.habitat?.name}</p>
               </Row>
               <Row>
                 <h4>Color</h4>
-                <p>{pokemon?.species?.color.name}</p>
+                <p>{pokemon?.species?.color?.name}</p>
               </Row>
             </Tab.Pane>
             <Tab.Pane
@@ -380,18 +380,16 @@ const PokeTabs = ({ bgcolor, pokemon, initTabs, className }) => {
                               style={{ color: `${tabColor}86` }}
                             >
                               <span>
-                                {item.evolution_details[0].trigger.name}
+                                {item.evolution_details[0]?.trigger.name}
                               </span>
-                              <span>{item.evolution_details[0].min_level}</span>
+                              <span>{item.evolution_details[0]?.min_level}</span>
                             </div>
                           )}
                         </Col>
                         <Col className="evocardContainer">
                           <EvoCard
                             url={
-                              "https://projectpokemon.org/images/normal-sprite/" +
-                              item.name +
-                              ".gif"
+                              PokeUrl.getUrl("Sprite", item.name, ".gif")
                             }
                             name={item.name}
                             number={item.id}
@@ -407,9 +405,7 @@ const PokeTabs = ({ bgcolor, pokemon, initTabs, className }) => {
                 {hasMega && (
                   <EvoCard
                     url={
-                      "https://projectpokemon.org/images/normal-sprite/" +
-                      megaName +
-                      ".gif"
+                      PokeUrl.getUrl("Sprite", megaName, ".gif")
                     }
                     name={megaName}
                     number={pokemon?.species?.evolution_chain?.chain[2]?.id}

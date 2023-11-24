@@ -20,7 +20,7 @@ import {
   DarkFilter,
   RockFilter,
 } from "../../assets/svg/filters";
-import { Pokeapi } from "../../helpers/Utils";
+import { PokeUrl } from "../../helpers/Utils";
 
 const PokeCard = ({ pokemon, modalshowevent }) => {
   const { id, name, sprites, types, species } = pokemon;
@@ -168,7 +168,7 @@ const PokeCard = ({ pokemon, modalshowevent }) => {
           <Badge bg="danger">{"#" + id}</Badge>
         </Card.Header>
         <div className="img-wrapper">
-          <Card.Img variant="top" src={Pokeapi.getPokemonImg(id)} />
+          <Card.Img variant="top" src={PokeUrl.getUrl("Shivam", id, ".png")}  />
         </div>
         <Card.Body>
           <Card.Title></Card.Title>

@@ -64,6 +64,7 @@ const PokeNavbar = ({
               <Dropdown.Item eventKey="50">50</Dropdown.Item>
               <Dropdown.Item eventKey="100">100</Dropdown.Item>
               <Dropdown.Item eventKey="500">500</Dropdown.Item>
+              <Dropdown.Item eventKey={count}>{count}</Dropdown.Item>
             </NavDropdown>
             <NavDropdown
               title={"Filter " + filter}

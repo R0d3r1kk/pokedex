@@ -8,15 +8,12 @@ import {
   DeepEqual,
 } from "../helpers/Functions";
 import {
-  BubbleContainer,
   PokeCard,
   PokeLoader,
   PokeNavbar,
 } from "../components";
 import { getPokemons } from "../helpers/GraphHelper.tsx";
-import toast, { Toaster, ToastBar } from "react-hot-toast";
-import Dexie from "dexie";
-import { useLiveQuery } from "dexie-react-hooks";
+import toast, { Toaster, ToastBar } from "react-hot-toast"; 
 import { db } from "../DB/database.config";
 
 export default function Home() {
@@ -279,17 +276,12 @@ export default function Home() {
 
       {isLoading && <PokeLoader />}
 
-      {/* <Row style={{ width: "100px", height: "100px" }}>
-        <BubbleContainer dataLitHue="20" dataLitCount="100" />
-      </Row> */}
-
       <Row className="pokerow">
         {handleSearch(pokemonList?.results)?.map((res) => {
           return (
             <PokeCard
               key={`${res?.name}-${res?.id}`}
               pokemon={res}
-              onClick={() => setModalShow(true)}
               modalshowevent={(showing) => {
                 if (showing) toast.dismiss("refresh");
                 else

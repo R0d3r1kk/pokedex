@@ -19,11 +19,28 @@ export const Colors = {
   dark: "#3A2D44",
 };
 
-export const Pokeapi = {
-  imgsBaseUrl:
-    "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/",
-  getPokemonImg: (id) => {
-    return Pokeapi.imgsBaseUrl + id + ".png";
-  },
-};
+export const PokeUrl = {
+  HybridShivam: "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/",
+  PokemonDb_GO: "https://img.pokemondb.net/sprites/go/normal/",
+  ProjectPokemon_Sprite: "https://projectpokemon.org/images/normal-sprite/",
+  getUrl: (type, id, ext = ".png") => {
+    let file = "";
+    switch(type){
+      case "Shivam":
+        if(id.toString().length === 1){
+          id = "00" + (id).toString();
+        }else if(id.toString().length === 2){
+          id = "0" + (id).toString();
+        }
+        file = id + ext;
+        return PokeUrl.HybridShivam + file;
+      case "PokemonGO":
+        file = id + ext;
+        return PokeUrl.PokemonDb_GO + file;
+      case "Sprite":
+        file = id + ext;
+        return PokeUrl.ProjectPokemon_Sprite + file;
+    }
+  }
+}
 

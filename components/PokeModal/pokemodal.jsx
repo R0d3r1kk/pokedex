@@ -2,7 +2,7 @@ import React from "react";
 import { Modal, Button } from "react-bootstrap";
 import { capitalizeFirstLetter } from "../../helpers/Functions";
 import { useState, useEffect } from "react";
-import { Colors } from "../../helpers/Utils";
+import { Colors, PokeUrl } from "../../helpers/Utils";
 import PokeTabs from "../PokeTabs/poketabs";
 import GoeFooter from "../anim/GoeFooter/goefooter";
 
@@ -42,15 +42,15 @@ const PokeModal = (props) => {
   const loadGif = () => {
     if (opened) {
       const img = new Image();
-      const src =
-        "https://projectpokemon.org/images/normal-sprite/" +
-        props.pokemon?.name.replace("-", "_") +
-        ".gif";
+      const src = PokeUrl.getUrl("PokemonGO", props.pokemon?.name.replace("-", "_"), ".png")
       img.src = src;
 
-      img.onload = () => {
+      img.onload = (data) => {
         setGif(src);
       };
+      img.onerror = (ex) => {
+        console.log(ex);
+      }
     }
   };
 
