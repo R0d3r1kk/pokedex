@@ -105,7 +105,7 @@ export default function Home() {
     return getPokemons({ limit: limit, offset: offset }).then((res) => {
       const response = {};
       if (!res) return;
-
+      
       const list = res.data;
       if (!list.results.length) {
         setWasLastList(true);
