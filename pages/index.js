@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useRef, useState, useEffect, useCallback } from "react";
-import { Row, CloseButton, Dropdown } from "react-bootstrap";
+import { Row, CloseButton, Dropdown, Button, Stack } from "react-bootstrap";
 import {
   formatPokemonName,
   roman_to_Int,
@@ -12,39 +12,48 @@ import {
   PokeLoader,
   PokeNavbar,
 } from "../components";
-import { getPokemons } from "../helpers/GraphHelper.tsx";
+import { getPokemons, getPokemonCount } from "../helpers/GraphHelper.tsx";
 import toast, { Toaster, ToastBar } from "react-hot-toast";
-import { db } from "../DB/database.config";
+import db, { exportDB } from "../DB/database.config";
 
 export default function Home() {
   const [limit, setLimit] = useState(10);
-  const [offset, setOffset] = useState(0);
+  const [obtainedPokemons, setObtainedPokemons] = useState(0);
   const [pokemonList, setPokemonList] = useState({
     results: [],
   });
-  const [currPage, setCurrPage] = useState(0);
-  const [prevPage, setPrevPage] = useState(-1);
-  const [wasLastList, setWasLastList] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [q, setQ] = useState("");
   const [searchParam] = useState(["name", "id"]);
   const [filterParam, setFilterParam] = useState("All");
+  const [pokemonCount, setPokemonCount] = useState();
 
 
   useEffect(() => {
-    if (!wasLastList && prevPage !== currPage) {
+    // if (!wasLastList) {
+    //   setIsLoading(true);
+    //   fetchData().then((data) => populateData(data));
+    // }
+
+    getPokemonCount().then((json) => {
+      setPokemonCount(json.data.pagination.item.count)
+    });
+  }, []);
+
+  useEffect(() => {
+    if (pokemonCount) {
       setIsLoading(true);
       fetchData().then((data) => populateData(data));
     }
-  }, [currPage, prevPage, wasLastList, pokemonList]);
+  }, [pokemonCount])
+
 
   useEffect(() => {
-    if (pokemonList.limit && pokemonList.limit < limit) {
-      setIsLoading(true);
-      if (pokemonList.results.length < limit)
+    if (pokemonCount) {
+      if (pokemonList.results.length < pokemonList.count) {
+        setIsLoading(true);
         getGraphQlItems().then((data) => populateData(data));
-      else
-        populateData({ results: _limit(pokemonList.results, limit) })
+      }
     }
   }, [limit]);
 
@@ -57,76 +66,110 @@ export default function Home() {
   const populateData = (data) => {
     setIsLoading(false);
     if (!data) return;
-    setOffset(parseInt(data.results?.length));
+    setObtainedPokemons(parseInt(data.results?.length));
     setPokemonList(data);
 
     console.log("data", data);
 
-    toast(
-      (t) => (
-        <span>
-          Get More <>Pokemons</>{" "}
-          <a
-            className="toastrefresh"
-            onClick={() => {
-              setCurrPage(pokemonList.next);
-              toast.dismiss("refresh");
-            }}
-          >
-            Refresh
-          </a>
-        </span>
-      ),
-      {
-        id: "refresh",
-        icon: <img src="/pokeball.svg" width={30} height={30} />,
-        position: "bottom-left",
-        duration: Infinity,
-      }
-    );
-  };
-
-  const fetchData = async () => {
-    if (pokemonList?.limit) return getGraphQlItems();
-    else
-      return getLocalItems().catch((e) => {
-        return getGraphQlItems();
-      });
-  };
-
-  const getLocalItems = async () => {
-    return db.pokemonlist
-      .where("id")
-      .equals(0)
-      .first()
-      .then((item) => {
-        if (!item.results.length) {
-          setWasLastList(true);
-          return;
-        }
-        setLimit(item.limit);
-        setPrevPage(currPage);
-
-        return item;
-      });
-  };
-
-
-  const getGraphQlItems = async () => {
-    return getPokemons({ limit: limit, offset: offset }).then((res) => {
-      var response = {};
-      if (!res) return;
-
-      const list = res.data;
-      if (!list.results.length) {
-        setWasLastList(true);
-        return;
-      }
-
+    if (data.count < pokemonCount)
       toast(
         (t) => (
           <span>
-            Rows retrieved {list.results?.length}{" "}
+            Get More <>Pokemons</>{" "}
+            <a
+              className="toastrefresh"
+              onClick={() => {
+                toast.dismiss("refresh");
+              }}
+            >
+              Refresh
+            </a>
+          </span>
+        ),
+        {
+          id: "refresh",
+          icon: <img src="/pokeball.svg" width={30} height={30} />,
+          position: "bottom-left",
+          duration: Infinity,
+        }
+      );
+  };
+
+  const fetchJson = () => {
+    return fetch('./db.json')
+      .then(response => {
+        console.log(response);
+        return response.json();
+      }).catch((e) => {
+        console.log(e.message);
+      });
+  }
+
+  const fetchData = async () => {
+    return getLocalItems().then((res) => {
+      if (res.results.length <= 0) {
+        return getGraphQlItems();
+      }
+
+      return res;
+    }).catch((e) => {
+      return getGraphQlItems();
+    });
+  };
+
+
+
+  const getLocalItems = async () => {
+
+    fetchJson().then((res) => {
+      populateData(res);
+    }).catch((e) => {
+      return db.pokemonlist
+        .where("id")
+        .equals(0)
+        .first()
+        .then((item) => {
+          toast(
+            (t) => (
+              <Stack direction="horizontal" gap={3}>
+                {item.results?.length} Rows retrieved from dexie
+                <Button variant="success" onClick={() => {
+                  console.log("exporting db");
+                  if (pokemonList.count > 0) {
+                    setIsLoading(true);
+                    exportDB(pokemonList);
+                    setIsLoading(false);
+                  }
+                }} >export</Button>
+              </Stack>
+
+            ),
+            {
+              id: "rows",
+              icon: <img src="/pokeball.svg" width={30} height={30} />,
+              position: "bottom-right",
+              duration: Infinity,
+            }
+          );
+          return item;
+        });
+    });
+
+
+
+
+  };
+
+  const getGraphQlItems = async () => {
+    return getPokemons({ limit: pokemonCount, offset: 0 }).then((res) => {
+      var response = {};
+      if (!res) return;
+
+      let list = res.data;
+      toast(
+        (t) => (
+          <span>
+            {list.results?.length} Rows retrieved{" "}
           </span>
         ),
         {
@@ -136,13 +179,9 @@ export default function Home() {
           duration: Infinity,
         }
       );
-
-      setPrevPage(currPage);
       if (list && pokemonList) {
         response = {
           count: list.pagination.item.count,
-          next: currPage || 0 + 1,
-          previuos: currPage || 0 - 1,
           results: [...pokemonList.results, ...list.results],
         };
       }
@@ -150,7 +189,6 @@ export default function Home() {
       storePokemonList({
         ...response,
         date_created: Date().toLocaleString(),
-        limit: limit,
       });
 
       return response;
@@ -161,8 +199,6 @@ export default function Home() {
     const pkl = {
       id: 0,
       count: obj?.count || 0,
-      next: obj?.next || 0,
-      previous: obj?.previous || 0,
       limit: limit,
       results: obj?.results || [],
       date_created: Date().toLocaleString(),
@@ -174,7 +210,6 @@ export default function Home() {
 
   const handleSelect = (e) => {
     setLimit(parseInt(e));
-    setCurrPage(0);
   };
 
   const handleSearch = (items) => {
@@ -284,7 +319,7 @@ export default function Home() {
       </Head>
       <PokeNavbar
         count={pokemonList.count}
-        offset={offset}
+        offset={obtainedPokemons}
         limit={limit}
         onLimitSelect={(ev) => handleSelect(ev)}
         onSearchChange={setQ}
@@ -310,7 +345,6 @@ export default function Home() {
                         <a
                           className="toastrefresh"
                           onClick={() => {
-                            setCurrPage(pokemonList.next);
                             toast.dismiss("refresh");
                           }}
                         >

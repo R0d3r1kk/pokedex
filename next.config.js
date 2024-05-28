@@ -6,7 +6,7 @@ module.exports = {
   env: {
     POKE_ENV: process.env.POKE_ENV,
   },
-  webpack: (config) => {
+  webpack: (config, { isServer }) => {
     if (isDev) {
       config.module.rules.push({
         test: /\.svg$/,
@@ -14,6 +14,12 @@ module.exports = {
         use: ["@svgr/webpack"],
       });
       return config;
+    }
+
+    if (!isServer) {
+      config.resolve.fallback = {
+        fs: false,
+      };
     }
 
     return {
@@ -24,4 +30,8 @@ module.exports = {
       },
     };
   },
+  resolve: {
+    // you can now require('file') instead of require('file.js')
+    extensions: ['', '.js', '.json']
+  }
 };

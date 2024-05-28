@@ -207,6 +207,14 @@ const queryPokemons = `query queryPokemons($limit: Int, $offset: Int) {
 }
 `;
 
+const queryPokemonCount = `query queryPokemons {
+  pagination: pokemon_v2_pokemon_aggregate {
+    item: aggregate {
+      count
+    }
+  }
+}`;
+
 type gqlFetchVariables = {
   id: 1;
 };
@@ -251,6 +259,31 @@ export const getPokemons = (gqlParams: gqlPaginationVariables) => {
     body: JSON.stringify({
       query: queryPokemons,
       variables: gqlParams,
+    }),
+    method: method,
+  })
+    .then((res) => {
+      // Unfortunately, fetch doesn't send (404 error) into the cache itself
+      // You have to send it, as I have done below
+      if (res.status >= 400) {
+        throw new Error("Server responds with error!");
+      }
+      return res.json();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+export const getPokemonCount = () => {
+  return fetch(baseUrl, {
+    credentials: "omit",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Method-Used": "graphiql",
+    },
+    body: JSON.stringify({
+      query: queryPokemonCount,
     }),
     method: method,
   })
