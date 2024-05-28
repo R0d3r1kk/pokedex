@@ -103,20 +103,28 @@ export default function Home() {
 
   const getGraphQlItems = async () => {
     return getPokemons({ limit: limit, offset: offset }).then((res) => {
-      const response = {};
+      var response = {};
       if (!res) return;
-      
+
       const list = res.data;
       if (!list.results.length) {
         setWasLastList(true);
         return;
       }
 
-      toast.success(`Rows retrieved ${list.results?.length}`, {
-        id: "rows",
-        icon: <img src="/pokeball.svg" width={30} height={30} />,
-        position: "top-center",
-      });
+      toast(
+        (t) => (
+          <span>
+           Rows retrieved {list.results?.length}{" "}
+          </span>
+        ),
+        {
+          id: "rows",
+          icon: <img src="/pokeball.svg" width={30} height={30} />,
+          position: "bottom-right",
+          duration: Infinity,
+        }
+      );
 
       setPrevPage(currPage);
 
@@ -277,10 +285,10 @@ export default function Home() {
       {isLoading && <PokeLoader />}
 
       <Row className="pokerow">
-        {handleSearch(pokemonList?.results)?.map((res) => {
+        {handleSearch(pokemonList?.results)?.map((res, i) => {
           return (
             <PokeCard
-              key={`${res?.name}-${res?.id}`}
+              key={`${i}-${res?.name}-${res?.id}`}
               pokemon={res}
               modalshowevent={(showing) => {
                 if (showing) toast.dismiss("refresh");

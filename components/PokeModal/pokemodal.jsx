@@ -17,7 +17,7 @@ const PokeModal = (props) => {
   const [gif, setGif] = useState("/pokeball.svg");
   const [color, setColor] = useState("");
 
-  useEffect(async () => {
+  useEffect(() => {
     if (opened && !isFinished) {
       loadGif();
 
@@ -34,9 +34,9 @@ const PokeModal = (props) => {
       }
     }
 
-    return () => {
-      if (filter) props.animoptions.filter = filter;
-    };
+    // return () => {
+    //   if (filter) props.animoptions.filter = filter;
+    // };
   }, [opened, isFinished]);
 
   const loadGif = () => {

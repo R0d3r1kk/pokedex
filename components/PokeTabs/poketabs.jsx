@@ -103,12 +103,12 @@ const PokeTabs = ({ bgcolor, pokemon, initTabs, className }) => {
     usePagination
   );
 
-  useEffect(async () => {
+  useEffect(() => {
     if (initTabs) {
       let megaName = `${pokemon?.species?.evolution_chain?.chain[2]?.name}-mega`;
       setTabColor(Colors[pokemon?.types[0]?.type.name]);
       setMegaName(megaName);
-      await fetchImage(megaName);
+      fetchImage(megaName);
     }
   }, [pokemon.evolution, hasMega]);
 
@@ -191,15 +191,18 @@ const PokeTabs = ({ bgcolor, pokemon, initTabs, className }) => {
         <thead>
           {
             // Loop over the header rows
-            headerGroups.map((headerGroup) => (
+            headerGroups.map((headerGroup) => {
+              const { key, ...restHeaderProps } = headerGroup.getHeaderGroupProps();
               // Apply the header row props
-              <tr {...headerGroup.getHeaderGroupProps()}>
+              <tr key={key} {...restHeaderProps}>
                 {
                   // Loop over the headers in each row
-                  headerGroup.headers.map((column) => (
+                  headerGroup.headers.map((column, i) => {
+                    const { key, ...restColumnProps } = column.getHeaderProps();
                     // Apply the header cell props
                     <th
-                      {...column.getHeaderProps(column.getSortByToggleProps())}
+                      key={key}
+                      {...restColumnProps}
                     >
                       {
                         // Render the header
@@ -215,10 +218,10 @@ const PokeTabs = ({ bgcolor, pokemon, initTabs, className }) => {
                         </span>
                       }
                     </th>
-                  ))
+                  })
                 }
               </tr>
-            ))
+            })
           }
         </thead>
         <tbody {...getTableBodyProps()}>
@@ -227,15 +230,17 @@ const PokeTabs = ({ bgcolor, pokemon, initTabs, className }) => {
             page.map((row) => {
               // Prepare the row for display
               prepareRow(row);
+              const {key, ...restRowProps } = row.getRowProps();
               return (
                 // Apply the row props
-                <tr {...row.getRowProps()}>
+                <tr key={key} {...restRowProps}>
                   {
                     // Loop over the rows cells
                     row.cells.map((cell) => {
+                      const {key, ...restCellProps } = cell.getCellProps();
                       // Apply the cell props
                       return (
-                        <td {...cell.getCellProps()}>
+                        <td key={key} {...restCellProps}>
                           {
                             // Render the cell contents
                             cell.render("Cell")
@@ -432,22 +437,22 @@ const PokeTabs = ({ bgcolor, pokemon, initTabs, className }) => {
   );
 };
 
-PokeTabs.propTypes = {
-  bgcolor: propTypes.string.isRequired,
-  pokemon: propTypes.object.isRequired,
-  initTabs: propTypes.bool,
-  className: propTypes.string,
-};
+// PokeTabs.propTypes = {
+//   bgcolor: propTypes.string.isRequired,
+//   pokemon: propTypes.object.isRequired,
+//   initTabs: propTypes.bool,
+//   className: propTypes.string,
+// };
 
-PokeTabs.defaultProps = {
-  bgcolor: "#fff",
-  pokemon: {
-    details: { id: 0 },
-    evolution: {},
-    mega_evolution: {},
-  },
-  initTabs: false,
-  className: "",
-};
+// PokeTabs.defaultProps = {
+//   bgcolor: "#fff",
+//   pokemon: {
+//     details: { id: 0 },
+//     evolution: {},
+//     mega_evolution: {},
+//   },
+//   initTabs: false,
+//   className: "",
+// };
 
 export default PokeTabs;

@@ -218,12 +218,12 @@ const PokeCard = ({ pokemon, modalshowevent }) => {
   );
 };
 
-PokeCard.propTypes = {
-  pokemon: propTypes.object.isRequired,
-  modalshowevent: propTypes.func,
-};
+// PokeCard.propTypes = {
+//   pokemon: propTypes.object.isRequired,
+//   modalshowevent: propTypes.func,
+// };
 
-PokeCard.defaultProps = {
-  pokemon: {},
-};
+// PokeCard.defaultProps = {
+//   pokemon: {},
+// };
 export default PokeCard;
