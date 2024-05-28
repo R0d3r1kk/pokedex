@@ -121,8 +121,8 @@ export default function Home() {
 
   const getLocalItems = async () => {
 
-    fetchJson().then((res) => {
-      populateData(res);
+    return fetchJson().then((res) => {
+      return res;
     }).catch((e) => {
       return db.pokemonlist
         .where("id")

@@ -6,6 +6,7 @@ import {
   Dropdown,
   Container,
   Form,
+  Stack
 } from "react-bootstrap";
 import propTypes from "prop-types";
 import debounce from "lodash.debounce";
@@ -60,10 +61,12 @@ const PokeNavbar = ({
               onSelect={onLimitSelect}
             >
               <Dropdown.Item eventKey="10">10</Dropdown.Item>
-              <Dropdown.Item eventKey="30">30</Dropdown.Item>
               <Dropdown.Item eventKey="50">50</Dropdown.Item>
               <Dropdown.Item eventKey="100">100</Dropdown.Item>
+              <Dropdown.Item eventKey="300">300</Dropdown.Item>
               <Dropdown.Item eventKey="500">500</Dropdown.Item>
+              <Dropdown.Item eventKey="800">800</Dropdown.Item>
+              <Dropdown.Item eventKey="1000">1000</Dropdown.Item>
               <Dropdown.Item eventKey={count}>{count}</Dropdown.Item>
             </NavDropdown>
             <NavDropdown
@@ -80,14 +83,26 @@ const PokeNavbar = ({
             </NavDropdown>
           </Nav>
           <Form className="d-flex">
-            <Form.Control
-              type="search"
-              placeholder="Search"
-              className="me-2"
-              aria-label="Search"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+            <Stack direction="horizontal" gap={3}>
+              <Form.Range name="limit" min={10} max={count} value={limit} onChange={(ev) => {
+                onLimitSelect(ev.target.value);
+              }
+              } />
+
+              <Form.Control
+                type="number"
+                value={limit}
+                onChange={(ev) => onLimitSelect(ev.target.value)}
+              />
+              <Form.Control
+                type="search"
+                placeholder="Search"
+                className="me-2"
+                aria-label="Search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </Stack>
           </Form>
         </Navbar.Collapse>
       </Container>
