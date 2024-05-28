@@ -22,12 +22,12 @@ export default function Home() {
   const [pokemonList, setPokemonList] = useState({
     results: [],
   });
+  const [pokemonCount, setPokemonCount] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [q, setQ] = useState("");
   const [searchParam] = useState(["name", "id"]);
   const [filterParam, setFilterParam] = useState("All");
-  const [pokemonCount, setPokemonCount] = useState();
-
+  const [filteredPokemonList, setFilterPokemonList] = useState([]);
 
   useEffect(() => {
     // if (!wasLastList) {
@@ -39,6 +39,12 @@ export default function Home() {
       setPokemonCount(json.data.pagination.item.count)
     });
   }, []);
+
+  useEffect(() => {
+    if(pokemonList.results.length > 0){
+      setFilterPokemonList(handleSearch(_limit(pokemonList?.results, limit)));1
+    }
+  }, [q, limit])
 
   useEffect(() => {
     if (pokemonCount) {
@@ -117,11 +123,12 @@ export default function Home() {
     });
   };
 
-
-
   const getLocalItems = async () => {
 
     return fetchJson().then((res) => {
+      if (res.results <= 0) {
+        throw "data null";
+      }
       return res;
     }).catch((e) => {
       return db.pokemonlist
@@ -330,7 +337,7 @@ export default function Home() {
       {isLoading && <PokeLoader />}
 
       <Row className="pokerow">
-        {handleSearch(_limit(pokemonList?.results, limit))?.map((res, i) => {
+        {filteredPokemonList?.map((res, i) => {
           return (
             <PokeCard
               key={`${i}-${res?.name}-${res?.id}`}
