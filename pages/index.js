@@ -13,7 +13,7 @@ import {
   PokeNavbar,
 } from "../components";
 import { getPokemons } from "../helpers/GraphHelper.tsx";
-import toast, { Toaster, ToastBar } from "react-hot-toast"; 
+import toast, { Toaster, ToastBar } from "react-hot-toast";
 import { db } from "../DB/database.config";
 
 export default function Home() {
@@ -30,6 +30,7 @@ export default function Home() {
   const [searchParam] = useState(["name", "id"]);
   const [filterParam, setFilterParam] = useState("All");
 
+
   useEffect(() => {
     if (!wasLastList && prevPage !== currPage) {
       setIsLoading(true);
@@ -40,9 +41,18 @@ export default function Home() {
   useEffect(() => {
     if (pokemonList.limit && pokemonList.limit < limit) {
       setIsLoading(true);
-      getGraphQlItems().then((data) => populateData(data));
+      if (pokemonList.results.length < limit)
+        getGraphQlItems().then((data) => populateData(data));
+      else
+        populateData({ results: _limit(pokemonList.results, limit) })
     }
   }, [limit]);
+
+  function _limit(arr, c) {
+    return arr.filter((x, i) => {
+      if (i <= (c - 1)) { return true }
+    })
+  }
 
   const populateData = (data) => {
     setIsLoading(false);
@@ -101,6 +111,7 @@ export default function Home() {
       });
   };
 
+
   const getGraphQlItems = async () => {
     return getPokemons({ limit: limit, offset: offset }).then((res) => {
       var response = {};
@@ -115,7 +126,7 @@ export default function Home() {
       toast(
         (t) => (
           <span>
-           Rows retrieved {list.results?.length}{" "}
+            Rows retrieved {list.results?.length}{" "}
           </span>
         ),
         {
@@ -127,7 +138,6 @@ export default function Home() {
       );
 
       setPrevPage(currPage);
-
       if (list && pokemonList) {
         response = {
           count: list.pagination.item.count,
@@ -205,9 +215,9 @@ export default function Home() {
               return item?.game_indices?.some((index) => {
                 return index.version[search]
                   ? index.version[search]
-                      .toString()
-                      .toLowerCase()
-                      .indexOf(q.toLocaleLowerCase()) > -1
+                    .toString()
+                    .toLowerCase()
+                    .indexOf(q.toLocaleLowerCase()) > -1
                   : false;
               });
             } else return item[search]?.toString();
@@ -285,7 +295,7 @@ export default function Home() {
       {isLoading && <PokeLoader />}
 
       <Row className="pokerow">
-        {handleSearch(pokemonList?.results)?.map((res, i) => {
+        {handleSearch(_limit(pokemonList?.results, limit))?.map((res, i) => {
           return (
             <PokeCard
               key={`${i}-${res?.name}-${res?.id}`}
