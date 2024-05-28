@@ -44,7 +44,7 @@ export default function Home() {
     if(pokemonList.results.length > 0){
       setFilterPokemonList(handleSearch(_limit(pokemonList?.results, limit)));1
     }
-  }, [q, limit])
+  }, [q, limit, pokemonList])
 
   useEffect(() => {
     if (pokemonCount) {

@@ -1,3 +1,14 @@
+.modal{
+  padding: 0 !important;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-dialog{
+  width: 97% !important;
+}
+
 .modal-title{
     z-index: 2;
 }

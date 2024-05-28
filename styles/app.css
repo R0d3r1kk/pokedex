@@ -15,6 +15,9 @@ body {
   justify-content: center;
   transition: 0.4s ease-out;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .pokecon{
