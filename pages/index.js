@@ -35,14 +35,17 @@ export default function Home() {
     //   fetchData().then((data) => populateData(data));
     // }
 
-    getPokemonCount().then((json) => {
-      setPokemonCount(json.data.pagination.item.count)
+    getPokemonCount(0).then((json) => {
+      if (json)
+        setPokemonCount(json.count);
+      else
+        setPokemonCount(0);
     });
   }, []);
 
   useEffect(() => {
-    if(pokemonList.results.length > 0){
-      setFilterPokemonList(handleSearch(_limit(pokemonList?.results, limit)));1
+    if (pokemonList.results.length > 0) {
+      setFilterPokemonList(handleSearch(_limit(pokemonList?.results, limit)));
     }
   }, [q, limit, pokemonList])
 

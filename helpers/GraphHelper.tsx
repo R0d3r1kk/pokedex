@@ -1,4 +1,5 @@
-const baseUrl = "https://beta.pokeapi.co/graphql/v1beta";
+const baseGUrl = "https://beta.pokeapi.co/graphql/v1beta";
+const basePUrl = "https://pokeapi.co/api/v2/";
 const method = "POST";
 
 const queryPokemon = `query queryPokemon($id: Int!) {
@@ -224,7 +225,7 @@ type gqlPaginationVariables = {
 };
 
 export const getPokemon = (gqlParams: gqlFetchVariables) => {
-  return fetch(baseUrl, {
+  return fetch(baseGUrl, {
     credentials: "omit",
     headers: {
       "Content-Type": "application/json",
@@ -250,7 +251,7 @@ export const getPokemon = (gqlParams: gqlFetchVariables) => {
 };
 
 export const getPokemons = (gqlParams: gqlPaginationVariables) => {
-  return fetch(baseUrl, {
+  return fetch(baseGUrl, {
     credentials: "omit",
     headers: {
       "Content-Type": "application/json",
@@ -275,8 +276,26 @@ export const getPokemons = (gqlParams: gqlPaginationVariables) => {
     });
 };
 
-export const getPokemonCount = () => {
-  return fetch(baseUrl, {
+export const getPokemonCount = (option=0) => {
+
+  if(option <= 0){
+    
+    return fetch(basePUrl + "pokemon?offset=0&limit=1", {
+      method: "GET",
+    })
+      .then((res) => {
+        // Unfortunately, fetch doesn't send (404 error) into the cache itself
+        // You have to send it, as I have done below
+        if (res.status >= 400) {
+          throw new Error("Server responds with error!");
+        }
+        return res.json();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+  return fetch(baseGUrl, {
     credentials: "omit",
     headers: {
       "Content-Type": "application/json",
