@@ -1,4 +1,4 @@
-.pokecard:hover .goefooter {
+.pokecard .goefooter {
   z-index: 1;
   background-color: transparent;
   display: grid;

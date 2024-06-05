@@ -6,6 +6,7 @@ import "../styles/poketabs.css";
 import "../styles/animations.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../styles/goefooter.css";
+import '../styles/pokesidebar.css';
 
 
 

@@ -23,6 +23,7 @@
   border: 1px solid rgba(0, 0, 0, 0) !important;
   transition: 0.4s ease-out;
 }
+
 .pokecard:after {
   content: "";
   background-image: url(https://icon-library.com/images/pokemon-desktop-icon/pokemon-desktop-icon-23.jpg);
@@ -38,9 +39,15 @@
   bottom: 5em;
   z-index: 0;
 }
+
+.disabled {
+  pointer-events: none;
+}
+
 .pokecard:hover {
   transition: 0.4s ease-out;
 }
+
 .pokecard:hover::after {
   width: 0px;
   opacity: 0.7;
@@ -56,10 +63,12 @@
   width: 100%;
   z-index: 2;
 }
+
 .pokecard .img-wrapper img {
   width: 100%;
   z-index: 2;
 }
+
 .pokecard .card-header {
   border: none;
   display: flex;
@@ -72,14 +81,17 @@
 .pokecard .card-body {
   z-index: 2;
 }
+
 .pokecard:hover .content {
   transform: translateY(40px);
 }
+
 .pokecard .card-header .badge {
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .pokecard .content {
   min-height: 25%;
   background-color: rgba(0, 0, 0, 0.2);
@@ -92,10 +104,44 @@
   display: flex;
 }
 
+.pokecard .content .hstack {
+  height: 30px;
+}
+
+
+.pokecard .content .icon {
+  border-radius: 100%;
+  height: 30px;
+  width: 30px;
+  margin: auto;
+  transition: 200ms all;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pokecard .content svg:hover {
+  filter: saturate(200%);
+  transform: scale(1.1);
+  cursor: pointer;
+}
+
+.pokecard .content svg {
+  height: 70%;
+  width: 70%;
+  margin: 0;
+}
+
 .pokecard .content .pokecolor {
+  margin-top: 5px;
   font-size: 10pt;
   font-weight: bold;
   font-style: italic;
+  height: 25px;
+  text-shadow: -1px 1px 0 #aaa,
+    1px 1px 0 #aaa,
+    1px -1px 0 #aaa,
+    -1px -1px 0 #aaa;
 }
 
 .water:hover {

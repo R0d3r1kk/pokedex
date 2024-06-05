@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useRef, useState, useEffect, useCallback } from "react";
-import { Row, CloseButton, Dropdown, Button, Stack } from "react-bootstrap";
+import { Row, CloseButton, Dropdown, Button, Stack, Collapse } from "react-bootstrap";
 import {
   formatPokemonName,
   roman_to_Int,
@@ -11,10 +11,13 @@ import {
   PokeCard,
   PokeLoader,
   PokeNavbar,
+  PokeSideBar
 } from "../components";
 import { getPokemons, getPokemonCount } from "../helpers/GraphHelper.tsx";
 import toast, { Toaster, ToastBar } from "react-hot-toast";
 import db, { exportDB } from "../DB/database.config";
+import { useSpring, animated } from '@react-spring/web';
+import { Colors } from "../helpers/Utils.jsx";
 
 export default function Home() {
   const [limit, setLimit] = useState(10);
@@ -28,13 +31,24 @@ export default function Home() {
   const [searchParam] = useState(["name", "id"]);
   const [filterParam, setFilterParam] = useState("All");
   const [filteredPokemonList, setFilterPokemonList] = useState([]);
+  const [selectedPokemon, setSelectedPokemon] = useState();
+  const [currentAnimOptions, setCurrentAnimOptions] = useState();
+  const [curretnCardFooter, setCurrentCardFooter] = useState();
+  const [reverse, setReverse] = useState(false);
+  const [sidebarOpen, setSideBarOpen] = useState();
+
+
+  const [sb_props, sb_api] = useSpring(() => ({
+    x: "100vw",
+    width: "100vw",
+  }));
 
   useEffect(() => {
     // if (!wasLastList) {
     //   setIsLoading(true);
     //   fetchData().then((data) => populateData(data));
     // }
-
+    setSideBarOpen(false);
     getPokemonCount(0).then((json) => {
       if (json)
         setPokemonCount(json.count);
@@ -47,7 +61,7 @@ export default function Home() {
     if (pokemonList.results.length > 0) {
       setFilterPokemonList(handleSearch(_limit(pokemonList?.results, limit)));
     }
-  }, [q, limit, pokemonList])
+  }, [q, limit, pokemonList, filterParam])
 
   useEffect(() => {
     if (pokemonCount) {
@@ -55,7 +69,6 @@ export default function Home() {
       fetchData().then((data) => populateData(data));
     }
   }, [pokemonCount])
-
 
   useEffect(() => {
     if (pokemonCount) {
@@ -312,6 +325,51 @@ export default function Home() {
     return filtered ? filtered : [];
   };
 
+  function openPokeDetail(pokemon, ref) {
+    sb_api.start({
+      from: {
+        x: "100vw",
+        width: !reverse && sidebarOpen ? "40vw" : "100vw",
+      },
+      to: {
+        x: "40vw",
+        width: "40vw",
+      },
+      onStart: (res, ctr, item) =>{
+        console.log(res, ctr, item);
+        let sidebarValue = res.value.x;
+        let sbVal = parseInt(sidebarValue.replace("vw", ""));
+        if(sbVal > 40){
+          document.querySelector("#" + pokemon.name).classList.add("disabled");
+          setSideBarOpen(true);
+        }else{
+          setSideBarOpen(false);
+        }
+      },
+      onResolve: (res, ctr, item) =>{
+        console.log(res, ctr, item);
+        document.querySelector(".pokerow").scrollTo({ "top": ref.current?.offsetTop - 120, "behavior": "smooth" });
+      },
+      reverse: reverse
+    });
+  }
+
+  function getScrollbarColor() {
+    return selectedPokemon ? Colors[selectedPokemon.types[0].type.name] : "transparent";
+  }
+
+  const handleViewSidebar = (pokemon, options, footer, ref) => {
+    console.log(pokemon, ref);
+    setReverse(false);
+    setSelectedPokemon(pokemon);
+    setCurrentAnimOptions(options);
+    setCurrentCardFooter(footer);
+    openPokeDetail(pokemon, ref);
+    document.querySelector(".pokecard").classList.remove("disabled");
+  };
+
+
+
   return (
     <div className="pokecon">
       <Head>
@@ -334,46 +392,40 @@ export default function Home() {
         onLimitSelect={(ev) => handleSelect(ev)}
         onSearchChange={setQ}
         filter={filterParam}
-        onFilterSelect={(ev) => setFilterParam(ev)}
+        onFilterSelect={(ev) => {
+          setFilterParam(ev);
+          setQ("");
+        }}
       />
 
       {isLoading && <PokeLoader />}
 
-      <Row className="pokerow">
+      <PokeSideBar
+        isOpen={!reverse}
+        currentPokemon={selectedPokemon}
+        animOptions={currentAnimOptions}
+        footer={curretnCardFooter}
+        springs={{ x: sb_props.x }}
+      />
+
+      <animated.div
+        className="row pokerow"
+        id="style-12"
+        style={{
+          width: sb_props.width,
+          "--scrollbarbg": `${getScrollbarColor()}`
+        }}>
         {filteredPokemonList?.map((res, i) => {
           return (
             <PokeCard
+              isOpen={sidebarOpen}
               key={`${i}-${res?.name}-${res?.id}`}
               pokemon={res}
-              modalshowevent={(showing) => {
-                if (showing) toast.dismiss("refresh");
-                else
-                  toast(
-                    (t) => (
-                      <span>
-                        Get More <>Pokemons</>{" "}
-                        <a
-                          className="toastrefresh"
-                          onClick={() => {
-                            toast.dismiss("refresh");
-                          }}
-                        >
-                          Refresh
-                        </a>
-                      </span>
-                    ),
-                    {
-                      id: "refresh",
-                      icon: <img src="/pokeball.svg" width={30} height={30} />,
-                      position: "bottom-left",
-                      duration: Infinity,
-                    }
-                  );
-              }}
+              onClick={handleViewSidebar}
             />
           );
         })}
-      </Row>
+      </animated.div>
       <Toaster>
         {(t) => (
           <ToastBar toast={t}>

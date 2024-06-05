@@ -1,0 +1,115 @@
+.sidebar {
+    position: absolute;
+    top: 4em;
+    height: 92%;
+    width: 70vw;
+
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.sidebar:after {
+    content: "";
+    background-image: url(https://icon-library.com/images/pokemon-desktop-icon/pokemon-desktop-icon-23.jpg);
+    background-repeat: no-repeat;
+    background-size: 30em;
+    filter: brightness(0%);
+    transform: rotate(180deg);
+    opacity: 0.2;
+    position: absolute;
+    transition: 0.4s ease-out;
+    height: 30em;
+    width: 15em;
+    left: 0;
+    bottom: 10em;
+    z-index: 0;
+}
+
+
+.sidebar.open .goefooter {
+    z-index: 1;
+    background-color: transparent;
+    display: grid;
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    grid-area: footer;
+    min-height: 97%;
+    transition: right 0.5s ease-in-out;
+    /* opacity: 0.6; */
+}
+
+
+.sidebar.open .goefooter .bubbles {
+    position: absolute;
+    bottom: -35px;
+    left: -11px;
+    right: -11px;
+    background: var(--footer-background);
+    /* filter: url("#goefilter_svg__blob"); */
+    z-index: 0;
+}
+
+.sidebar.open .goefooter .bubbles .bubble {
+    position: absolute;
+    left: var(--position, 50%);
+    background: var(--footer-bubble-background);
+    border-radius: 100%;
+    -webkit-animation: bubble-size var(--time, 4s) ease-in infinite var(--delay, 0s),
+        bubble-move var(--time, 4s) ease-in infinite var(--delay, 0s);
+    animation: bubble-size var(--time, 4s) ease-in infinite var(--delay, 0s),
+        bubble-move var(--time, 4s) ease-in infinite var(--delay, 0s);
+    transform: translate(-50%, 100%);
+}
+
+
+@-webkit-keyframes bubble-size {
+
+    0%,
+    75% {
+        width: var(--size, 4rem);
+        height: var(--size, 4rem);
+    }
+
+    100% {
+        width: 0rem;
+        height: 0rem;
+    }
+}
+
+@keyframes bubble-size {
+
+    0%,
+    75% {
+        width: var(--size, 4rem);
+        height: var(--size, 4rem);
+    }
+
+    100% {
+        width: 0rem;
+        height: 0rem;
+    }
+}
+
+@-webkit-keyframes bubble-move {
+    0% {
+        bottom: -4rem;
+    }
+
+    100% {
+        bottom: var(--distance, 10rem);
+    }
+}
+
+@keyframes bubble-move {
+    0% {
+        bottom: -4rem;
+    }
+
+    100% {
+        bottom: var(--distance, 10rem);
+    }
+}

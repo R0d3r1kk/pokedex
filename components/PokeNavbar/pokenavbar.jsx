@@ -6,10 +6,11 @@ import {
   Dropdown,
   Container,
   Form,
-  Stack
+  Stack,
+  Collapse
 } from "react-bootstrap";
 import propTypes from "prop-types";
-import debounce from "lodash.debounce";
+import { getFilterIcons } from "../../helpers/Utils.jsx";
 
 const PokeNavbar = ({
   limit,
@@ -81,16 +82,40 @@ const PokeNavbar = ({
               <Dropdown.Item eventKey="Version">By Version</Dropdown.Item>
               <Dropdown.Item eventKey="Color">By Color</Dropdown.Item>
             </NavDropdown>
+            <Collapse in={filter === "Type"} >
+              <Stack className="type_filter" direction="horizontal" gap={1}>
+                {getFilterIcons().map((f, idx) => {
+                  return <div
+                    key={f.type_name + "_" + idx}
+                    className="icon"
+                    style={{ 
+                      backgroundColor: f?.type_color || "light",
+                      boxShadow: "0 0 5px " + f?.type_color
+                    }}
+                    onClick={(ev) => {
+                      onFilterSelect("Type");
+                      onSearchChange(f.type_name);
+                    }}>
+                    {f.type_icon &&
+                      <f.type_icon onClick={(ev) => {
+                        onFilterSelect("Type");
+                        onSearchChange(f.type_name);
+                      }} />}
+                  </div>
+                })}
+              </Stack>
+            </Collapse>
           </Nav>
           <Form className="d-flex">
             <Stack direction="horizontal" gap={3}>
-              <Form.Range name="limit" min={10} max={count} value={limit} onChange={(ev) => {
+              {/* <Form.Range name="limit" min={10} max={count} value={limit} onChange={(ev) => {
                 onLimitSelect(ev.target.value);
               }
-              } />
+              } /> */}
 
               <Form.Control
                 type="number"
+                max={count}
                 value={limit}
                 onChange={(ev) => onLimitSelect(ev.target.value)}
               />
