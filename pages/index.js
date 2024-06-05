@@ -340,7 +340,7 @@ export default function Home() {
         let sidebarValue = res.value.x;
         let sbVal = parseInt(sidebarValue.replace("vw", ""));
         if(sbVal > 40){
-          document.querySelector("#" + pokemon.name).classList.add("disabled");
+          document.querySelector("#" + pokemon.name).classList.add("active");
           setSideBarOpen(true);
         }else{
           setSideBarOpen(false);
@@ -365,7 +365,7 @@ export default function Home() {
     setCurrentAnimOptions(options);
     setCurrentCardFooter(footer);
     openPokeDetail(pokemon, ref);
-    document.querySelector(".pokecard").classList.remove("disabled");
+    document.querySelector(".pokecard").classList.remove("active");
   };
 
 

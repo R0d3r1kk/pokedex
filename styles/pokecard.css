@@ -40,7 +40,7 @@
   z-index: 0;
 }
 
-.disabled {
+.card.active {
   pointer-events: none;
 }
 
