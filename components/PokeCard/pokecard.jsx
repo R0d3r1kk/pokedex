@@ -9,7 +9,7 @@ import { Colors, getGoeFooterOptions } from "../../helpers/Utils";
 
 import { PokeUrl } from "../../helpers/Utils";
 
-const PokeCard = ({ isOpen, pokemon, onClick }) => {
+const PokeCard = ({ isOpen, pokemon, selected, onClick }) => {
   const { id, name, sprites, types, species } = pokemon;
   const [animOptions, setAnimOptions] = useState();
   const [cardFooter, setCardFooter] = useState();
@@ -77,7 +77,7 @@ const PokeCard = ({ isOpen, pokemon, onClick }) => {
         key={id}
         ref={cardRef}
         id={name}
-        className={"pokecard " + cardFormat?.style?.className || ""}
+        className={isOpen && pokemon.name !== selected ?  "pokecard inactive " + cardFormat?.style?.className : "pokecard " + cardFormat?.style?.className || ""}
         onClick={(ev) => {
           ev.preventDefault();
           onClick(pokemon, animOptions, cardFooter, cardRef)

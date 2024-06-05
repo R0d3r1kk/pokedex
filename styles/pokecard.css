@@ -42,10 +42,17 @@
 
 .card.active {
   pointer-events: none;
+  filter: brightness(100%);
+}
+
+.card.inactive {
+  filter: brightness(50%);
 }
 
 .pokecard:hover {
   transition: 0.4s ease-out;
+  filter: brightness(100%);
+  
 }
 
 .pokecard:hover::after {

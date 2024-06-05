@@ -335,19 +335,21 @@ export default function Home() {
         x: "40vw",
         width: "40vw",
       },
-      onStart: (res, ctr, item) =>{
+      onStart: (res, ctr, item) => {
         console.log(res, ctr, item);
         let sidebarValue = res.value.x;
         let sbVal = parseInt(sidebarValue.replace("vw", ""));
-        if(sbVal > 40){
-          document.querySelector("#" + pokemon.name).classList.add("active");
+        if (sbVal > 40) {
+          document.querySelector("#" + pokemon.name).classList.remove("inactive");
+          document.querySelector(".pokerow").scrollTo({ "top": ref.current?.offsetTop - 120, "behavior": "smooth" });
           setSideBarOpen(true);
-        }else{
+        } else {
           setSideBarOpen(false);
         }
       },
-      onResolve: (res, ctr, item) =>{
+      onResolve: (res, ctr, item) => {
         console.log(res, ctr, item);
+        document.querySelector("#" + pokemon.name).classList.add("active");
         document.querySelector(".pokerow").scrollTo({ "top": ref.current?.offsetTop - 120, "behavior": "smooth" });
       },
       reverse: reverse
@@ -359,13 +361,13 @@ export default function Home() {
   }
 
   const handleViewSidebar = (pokemon, options, footer, ref) => {
+    
     console.log(pokemon, ref);
     setReverse(false);
     setSelectedPokemon(pokemon);
     setCurrentAnimOptions(options);
     setCurrentCardFooter(footer);
     openPokeDetail(pokemon, ref);
-    document.querySelector(".pokecard").classList.remove("active");
   };
 
 
@@ -420,6 +422,7 @@ export default function Home() {
             <PokeCard
               isOpen={sidebarOpen}
               key={`${i}-${res?.name}-${res?.id}`}
+              selected={selectedPokemon?.name}
               pokemon={res}
               onClick={handleViewSidebar}
             />
