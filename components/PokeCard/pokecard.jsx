@@ -60,6 +60,9 @@ const PokeCard = ({ isOpen, pokemon, selected, onClick }) => {
         ref={cardRef}
         id={name}
         className={"pokecard inactive " + cardFormat?.style?.className || ""}
+        style={{
+          "--shadow-bg":cardFormat?.formatedTypes[0].color
+        }}
         onClick={(ev) => {
           ev.preventDefault();
           onClick(pokemon, animOptions, cardFooter)

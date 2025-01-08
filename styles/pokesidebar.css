@@ -1,6 +1,7 @@
 .sidebar {
     position: absolute;
     top: 4em;
+    left: 1em;
     height: 92%;
     width: 70vw;
     border-radius: 16px;
@@ -8,7 +9,7 @@
     transition: all 0s ease-in-out;
 }
 .pokerow{
-    transition: all 0s ease-in-out;
+    transition: all 0.1s ease-in;
 }
 /* .sidebar:after {
     content: "";

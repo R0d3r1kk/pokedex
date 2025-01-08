@@ -39,7 +39,7 @@
 
 .card.active {
   /* pointer-events: none; */
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 1);
+  box-shadow: 0 0px 10px var(--shadow-bg);
   filter: brightness(100%);
   
   transition: all 0.2s ease-in-out;
@@ -58,23 +58,32 @@
 
 .card.active .card-header {
   font-size: 23px;
+  transition: all 0.2s ease-in-out;
 }
 
 .card.active .card-body {
   transform: translateY(-15px);
+  transition: all 0.2s ease-in-out;
 }
 
 .card.inactive {
   filter: brightness(100%);
+  transition: all 0.2s ease-in-out;
 }
 
 .sbopen .card.inactive {
   filter: brightness(60%);
+  transition: all 0.2s ease-in-out;
 }
+
+/* .sbopen .card.inactive .img-wrapper img{
+  filter: brightness(0%);
+  transition: all 0.2s ease-in-out;
+} */
 
 .pokecard:hover {
   transition: 0.2s ease-in-out;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 1);
+  box-shadow: 0 0px 10px var(--shadow-bg);
   filter: brightness(100%);
   
 }
