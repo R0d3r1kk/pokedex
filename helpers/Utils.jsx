@@ -31,6 +31,7 @@ import {
   DarkFilter,
   RockFilter,
 } from "../assets/svg/filters";
+import { GoeFooter } from "../components";
 
 const colorNames = [
   "fire",
@@ -109,7 +110,6 @@ export function getFilterIcons() {
 export const PokeUrl = {
   HybridShivam: "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/",
   PokemonDb_GO: "https://img.pokemondb.net/sprites/go/normal/",
-  ProjectPokemon_Sprite: "https://projectpokemon.org/images/normal-sprite/",
   getUrl: (type, id, ext = ".png") => {
     let file = "";
     switch (type) {
@@ -124,9 +124,6 @@ export const PokeUrl = {
       case "PokemonGO":
         file = id + ext;
         return PokeUrl.PokemonDb_GO + file;
-      case "Sprite":
-        file = id + ext;
-        return PokeUrl.ProjectPokemon_Sprite + file;
     }
   }
 }
@@ -223,3 +220,20 @@ export function getGoeFooterOptions(
   }
   return options;
 }
+
+export function makeFooterAnimation(types, options, i) {
+  return (
+    <GoeFooter
+      key={i}
+      bubbles={options.bubbles}
+      bubblecolors={options.bubblecolors}
+      size={options.size}
+      distance={options.distance}
+      position={options.position}
+      time={options.time}
+      delay={options.dealy}
+      filter={options.filter}
+      opacity={options.opacity}
+    />
+  );
+};

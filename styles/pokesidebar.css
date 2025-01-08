@@ -3,33 +3,52 @@
     top: 4em;
     height: 92%;
     width: 70vw;
-
     border-radius: 16px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(20px);
+    background-color: rgba(0, 0, 0, 0.1);
+    transition: all 0s ease-in-out;
 }
-
-.sidebar:after {
+.pokerow{
+    transition: all 0s ease-in-out;
+}
+/* .sidebar:after {
     content: "";
-    background-image: url(https://icon-library.com/images/pokemon-desktop-icon/pokemon-desktop-icon-23.jpg);
-    background-repeat: no-repeat;
-    background-size: 30em;
-    filter: brightness(0%);
-    transform: rotate(180deg);
-    opacity: 0.2;
+    background: rgba( 0, 0, 0, 0.3 );
+    backdrop-filter: blur( 3px );
+    -webkit-backdrop-filter: blur( 3px );
+    border-radius: 10px;
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
+    position: absolute;
+    width: 70%;
+    min-height: 99%;
+    left: 5em;
+    z-index: 0;
+} */
+
+.sidebar::before{
+    content: "";
     position: absolute;
     transition: 0.4s ease-out;
-    height: 30em;
-    width: 15em;
-    left: 0;
-    bottom: 10em;
+    background-image: url('../assets/img/pokebal._detail.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: 40% 50%;
+    opacity: 1;
+    width: 100%;
+    min-height: 100%;
+    filter: url(#svgGradientMap);
     z-index: 0;
 }
 
+.sidebar .btn-close{
+    position: absolute;
+    top: 1em;
+
+    right: 20%;
+    z-index: 3;
+}
 
 .sidebar .goefooter {
-    z-index: 1;
+    z-index: 3;
     background-color: transparent;
     display: grid;
     position: absolute;
@@ -38,7 +57,6 @@
     left: 0;
     grid-area: footer;
     min-height: 97%;
-    transition: right 0.5s ease-in-out;
     /* opacity: 0.6; */
 }
 
@@ -50,6 +68,8 @@
     right: -11px;
     background: var(--footer-background);
     /* filter: url("#goefilter_svg__blob"); */
+    
+    transition: all 0s ease-in-out;
     z-index: 0;
 }
 

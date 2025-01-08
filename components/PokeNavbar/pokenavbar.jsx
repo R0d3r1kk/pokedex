@@ -38,7 +38,7 @@ const PokeNavbar = ({
   }, [search]);
 
   return (
-    <Navbar fixed="top" bg="dark" variant="dark" expand="lg">
+    <Navbar fixed="top" bg="" style={{backgroundColor: 'rgba(0,0,0,1)'}} variant="dark" expand="lg">
       <Container fluid>
         <Navbar.Brand href="/">
           <img

@@ -4,8 +4,7 @@ import {
   capitalizeFirstLetter,
 } from "../../helpers/Functions";
 import { useEffect, useRef, useState } from "react";
-import GoeFooter from "../anim/GoeFooter/goefooter";
-import { Colors, getGoeFooterOptions } from "../../helpers/Utils";
+import { Colors, getGoeFooterOptions, makeFooterAnimation } from "../../helpers/Utils";
 
 import { PokeUrl } from "../../helpers/Utils";
 
@@ -39,25 +38,8 @@ const PokeCard = ({ isOpen, pokemon, selected, onClick }) => {
     
     let options = getGoeFooterOptions(ftypes);
     setAnimOptions(options);
-    let footer = makeAnimation(cardFormat?.formatedTypes, options, 0);
+    let footer = makeFooterAnimation(cardFormat?.formatedTypes, options, 0);
     setCardFooter(footer);
-  };
-
-  const makeAnimation = (types, options, i) => {
-    return (
-      <GoeFooter
-        key={i}
-        bubbles={options.bubbles}
-        bubblecolors={options.bubblecolors}
-        size={options.size}
-        distance={options.distance}
-        position={options.position}
-        time={options.time}
-        delay={options.dealy}
-        filter={options.filter}
-        opacity={options.opacity}
-      />
-    );
   };
 
   const formatForModal = () => {
@@ -77,24 +59,21 @@ const PokeCard = ({ isOpen, pokemon, selected, onClick }) => {
         key={id}
         ref={cardRef}
         id={name}
-        className={isOpen && pokemon.name !== selected ?  "pokecard inactive " + cardFormat?.style?.className : "pokecard " + cardFormat?.style?.className || ""}
+        className={"pokecard inactive " + cardFormat?.style?.className || ""}
         onClick={(ev) => {
           ev.preventDefault();
-          onClick(pokemon, animOptions, cardFooter, cardRef)
+          onClick(pokemon, animOptions, cardFooter)
         }}
       >
         <Card.Header>
-          {capitalizeFirstLetter(name)}
-          <Badge bg="danger">{"#" + id}</Badge>
+          <Badge bg="" style={{ backgroundColor: species.color.name || "light" }}>{"#" + id}</Badge>
         </Card.Header>
         <div className="img-wrapper">
           <Card.Img variant="top" src={PokeUrl.getUrl("Shivam", id, ".png")} />
         </div>
         <Card.Body>
-          <Card.Title></Card.Title>
-          <Card.Subtitle className="mb-2 text-muted"></Card.Subtitle>
-        </Card.Body>
-        <div className="content">
+          <Card.Title>{capitalizeFirstLetter(name)}</Card.Title>
+          <Card.Subtitle className="mb-2 text-muted">
           <Stack direction="horizontal" gap={1}>
             {cardFormat?.formatedTypes?.map((poketype, idx) => {
               return (
@@ -110,14 +89,8 @@ const PokeCard = ({ isOpen, pokemon, selected, onClick }) => {
               );
             })}
           </Stack>
-          <Badge
-            bg="none"
-            className="pokecolor"
-            style={{ backgroundColor: species.color.name || "light" }}
-          >
-            {species.color.name}
-          </Badge>
-        </div>
+          </Card.Subtitle>
+        </Card.Body>
         {animOptions &&
           cardFooter}
       </Card>

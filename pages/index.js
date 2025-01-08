@@ -2,7 +2,7 @@ import Head from "next/head";
 import { useRef, useState, useEffect, useCallback } from "react";
 import { Row, CloseButton, Dropdown, Button, Stack, Collapse } from "react-bootstrap";
 import {
-  formatPokemonName,
+  getCardFormatByType,
   roman_to_Int,
   is_numeric,
   DeepEqual,
@@ -17,7 +17,7 @@ import { getPokemons, getPokemonCount } from "../helpers/GraphHelper.tsx";
 import toast, { Toaster, ToastBar } from "react-hot-toast";
 import db, { exportDB } from "../DB/database.config";
 import { useSpring, animated } from '@react-spring/web';
-import { Colors } from "../helpers/Utils.jsx";
+import { Colors, getGoeFooterOptions, makeFooterAnimation } from "../helpers/Utils.jsx";
 
 export default function Home() {
   const [limit, setLimit] = useState(10);
@@ -34,7 +34,6 @@ export default function Home() {
   const [selectedPokemon, setSelectedPokemon] = useState();
   const [currentAnimOptions, setCurrentAnimOptions] = useState();
   const [curretnCardFooter, setCurrentCardFooter] = useState();
-  const [reverse, setReverse] = useState(false);
   const [sidebarOpen, setSideBarOpen] = useState();
 
 
@@ -325,34 +324,42 @@ export default function Home() {
     return filtered ? filtered : [];
   };
 
-  function openPokeDetail(pokemon, ref) {
+  function openPokeDetail(pokemon, isOpen, rev) {
     sb_api.start({
       from: {
         x: "100vw",
-        width: !reverse && sidebarOpen ? "40vw" : "100vw",
+        width: !rev && isOpen ? "40vw" : "100vw",
       },
       to: {
         x: "40vw",
         width: "40vw",
       },
       onStart: (res, ctr, item) => {
-        console.log(res, ctr, item);
-        let sidebarValue = res.value.x;
-        let sbVal = parseInt(sidebarValue.replace("vw", ""));
-        if (sbVal > 40) {
-          document.querySelector("#" + pokemon.name).classList.remove("inactive");
-          document.querySelector(".pokerow").scrollTo({ "top": ref.current?.offsetTop - 120, "behavior": "smooth" });
-          setSideBarOpen(true);
+        var pkmn = document.querySelector("#" + pokemon.name);
+        if (isOpen) {
+          pkmn.classList.remove("inactive");
+          pkmn.classList.add("active");
+          document.querySelector(".pokerow").scrollTo({ "top": pkmn.offsetTop - 120, "behavior": "smooth" });
         } else {
-          setSideBarOpen(false);
+          pkmn.classList.add("inactive");
+          pkmn.classList.remove("active");
         }
+        setSideBarOpen(isOpen);
       },
       onResolve: (res, ctr, item) => {
-        console.log(res, ctr, item);
-        document.querySelector("#" + pokemon.name).classList.add("active");
-        document.querySelector(".pokerow").scrollTo({ "top": ref.current?.offsetTop - 120, "behavior": "smooth" });
+        var pkmn = document.querySelector("#" + pokemon.name);
+        if (isOpen) {
+          pkmn.classList.remove("inactive");
+          pkmn.classList.add("active");
+          document.querySelector(".pokerow").scrollTo({ "top": pkmn?.offsetTop - 120, "behavior": "smooth" });
+        } else {
+          pkmn.classList.add("inactive");
+          pkmn.classList.remove("active");
+          //document.querySelector(".pokerow").scrollTo({ "top": 0, "behavior": "smooth" });
+        }
+        setSideBarOpen(isOpen);
       },
-      reverse: reverse
+      reverse: rev
     });
   }
 
@@ -360,16 +367,18 @@ export default function Home() {
     return selectedPokemon ? Colors[selectedPokemon.types[0].type.name] : "transparent";
   }
 
-  const handleViewSidebar = (pokemon, options, footer, ref) => {
-    
-    console.log(pokemon, ref);
-    setReverse(false);
+  const handleViewSidebar = (pokemon, options, footer) => {
+
+    console.log(pokemon, options);
     setSelectedPokemon(pokemon);
     setCurrentAnimOptions(options);
     setCurrentCardFooter(footer);
-    openPokeDetail(pokemon, ref);
+    openPokeDetail(pokemon, true, false);
   };
 
+  const closeViewSidebar = (pokemon, options, footer) => {
+    openPokeDetail(pokemon, false, true);
+  };
 
 
   return (
@@ -403,7 +412,8 @@ export default function Home() {
       {isLoading && <PokeLoader />}
 
       <PokeSideBar
-        isOpen={!reverse}
+        isOpen={sidebarOpen}
+        close={closeViewSidebar}
         currentPokemon={selectedPokemon}
         animOptions={currentAnimOptions}
         footer={curretnCardFooter}
@@ -411,7 +421,7 @@ export default function Home() {
       />
 
       <animated.div
-        className="row pokerow"
+        className={sidebarOpen ? "row pokerow sbopen" : "row pokerow"}
         id="style-12"
         style={{
           width: sb_props.width,
@@ -429,6 +439,34 @@ export default function Home() {
           );
         })}
       </animated.div>
+      <Stack
+        id="style-12"
+        className="thumbs"
+        direction="vertical"
+        gap={1}
+        style={{
+          "--scrollbarbg": `${getScrollbarColor()}`
+        }}>
+        {
+          filteredPokemonList?.map((res, i) => {
+
+            const format = getCardFormatByType(res.types);
+            let options = getGoeFooterOptions(format.formatedTypes);
+            let footer = makeFooterAnimation(format?.formatedTypes, options, 0);
+
+            return <img
+              key={`${i}-${res?.name}-${res?.id}_thumb`}
+              src={res?.sprites[0].sprites.other.showdown.front_default}
+              width={40}
+              height={40}
+              alt={res?.name}
+              onClick={(ev) =>
+                handleViewSidebar(res, options, footer)
+              } />
+          })
+        }
+      </Stack>
+
       <Toaster>
         {(t) => (
           <ToastBar toast={t}>
