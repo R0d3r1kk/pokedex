@@ -32,7 +32,7 @@ body {
 .pokerow{
   margin: 0;
   margin-top: 3.5em !important;
-  margin-left: 1em !important;
+  margin-left: 2em !important;
   padding: 5em;
   height: 100vh;
   overflow-y: auto;
@@ -42,22 +42,58 @@ body {
   align-items: center;
   /* background: linear-gradient(to right, #ee5a50, #C4c7c9, #1d1d1d); */
   background-color: #000000;
+  position: relative;
+  z-index: 0;
 }
 
 .thumbs {
 	overflow-y: auto;
 	overflow-x: hidden;
+	width: 120px;
+	height: 90vh;
 	display: flex;
 	align-items: center;
-	width: 70px !important;
-	height: 90vh;
 	position: fixed;
 	left: 1em;
-	top:4em;
+	top:3em;
+	z-index: 1;
+	transition: all 0.2s ease-in-out;
 }
 
 .thumbs img{
+	padding: 5px;
+	transition: all 0.2s ease-in-out;
+}
+
+.thumbs .thumb-con{
 	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	transition: all 0.2s ease-in-out;
+}
+
+.thumbs .thumb-con.active{
+	width: 100%;
+	border-radius: .5em;
+	background-color: var(--shadow-bg);
+	box-shadow: 0 0px 10px var(--shadow-bg);
+	transition: all 0.2s ease-in-out;
+}
+
+.thumbs .thumb-con .thumb-id{
+	width: 40px;
+	color: var(--shadow-bg);
+	font-weight: bold;
+	transition: all 0.2s ease-in-out;
+}
+
+.thumbs .thumb-con.active .thumb-id{
+	display: block;
+	color: white;
+	font-weight: bold;
+	transition: all 0.2s ease-in-out;
 }
 
 .navbar-brand{

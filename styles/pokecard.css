@@ -18,6 +18,7 @@
   cursor: pointer;
   background: rgba(80, 80, 80, 0.1) !important;
   transition: 0.4s ease-out;
+  padding: 1em;
 }
 
 .pokecard:after {
@@ -81,7 +82,7 @@
 } */
 
 .pokecard:hover {
-  transition: 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
   box-shadow: 0 0px 10px var(--shadow-bg);
   filter: brightness(100%);
   
@@ -95,7 +96,7 @@
 .pokecard:hover::after {
   width: 0px;
   opacity: 0.7;
-  transition: 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
 .pokecard:hover .card-header {

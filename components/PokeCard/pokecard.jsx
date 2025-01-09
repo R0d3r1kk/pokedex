@@ -59,7 +59,7 @@ const PokeCard = ({ isOpen, pokemon, selected, onClick }) => {
         key={id}
         ref={cardRef}
         id={name}
-        className={"pokecard inactive " + cardFormat?.style?.className || ""}
+        className={pokemon.name == selected ? "pokecard active " + cardFormat?.style?.className : "pokecard inactive " + cardFormat?.style?.className}
         style={{
           "--shadow-bg":cardFormat?.formatedTypes[0].color
         }}
@@ -69,7 +69,7 @@ const PokeCard = ({ isOpen, pokemon, selected, onClick }) => {
         }}
       >
         <Card.Header>
-          <Badge bg="" style={{ backgroundColor: species.color.name || "light" }}>{"#" + id}</Badge>
+          {/* <Badge bg="" style={{ backgroundColor: species.color.name || "light" }}>{"#" + id}</Badge> */}
         </Card.Header>
         <div className="img-wrapper">
           <Card.Img variant="top" src={PokeUrl.getUrl("Shivam", id, ".png")} />

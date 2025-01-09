@@ -5,9 +5,7 @@ export default function Document() {
         <Html lang="es">
             <Head >
                 <meta charSet="utf-8" />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <meta name="description" content="" />
-                <title>Pokedex</title>
                 <link rel="icon" href="./pokeball.svg" />
                 <link
                     rel="stylesheet"

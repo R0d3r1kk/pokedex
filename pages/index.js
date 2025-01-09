@@ -1,10 +1,9 @@
-import { useRef, useState, useEffect, useCallback, Suspense } from "react";
-import { Row, CloseButton, Dropdown, Button, Stack, Collapse } from "react-bootstrap";
+import { useState, useEffect, Suspense } from "react";
+import { CloseButton, Button, Stack } from "react-bootstrap";
 import {
   getCardFormatByType,
   roman_to_Int,
   is_numeric,
-  DeepEqual,
 } from "../helpers/Functions";
 import {
   PokeCard,
@@ -109,8 +108,9 @@ export default function Home() {
       if (res.results <= 0) {
         throw "data null";
       }
-      storePokemonList(res);
-      return res;
+      setPokemonCount(res.data.count);
+      storePokemonList(res.data);
+      return res.data;
     }).catch((e) => {
       return db.pokemonlist
         .where("id")
@@ -262,6 +262,8 @@ export default function Home() {
   };
 
   function openPokeDetail(pokemon, isOpen, rev) {
+    var pkmn = document.querySelector("#" + pokemon.name);
+    document.querySelector(".pokerow").scrollTo({ "top": pkmn?.offsetTop - 120, "behavior": "smooth" });
     sb_api.start({
       from: {
         x: "100vw",
@@ -271,29 +273,9 @@ export default function Home() {
         x: "40vw",
         width: "40vw",
       },
-      onStart: (res, ctr, item) => {
-        var pkmn = document.querySelector("#" + pokemon.name);
-        if (isOpen) {
-          pkmn.classList.remove("inactive");
-          pkmn.classList.add("active");
-          document.querySelector(".pokerow").scrollTo({ "top": pkmn.offsetTop - 120, "behavior": "smooth" });
-        } else {
-          pkmn.classList.add("inactive");
-          pkmn.classList.remove("active");
-        }
-        setSideBarOpen(isOpen);
-      },
       onResolve: (res, ctr, item) => {
         var pkmn = document.querySelector("#" + pokemon.name);
-        if (isOpen) {
-          pkmn.classList.remove("inactive");
-          pkmn.classList.add("active");
-          document.querySelector(".pokerow").scrollTo({ "top": pkmn?.offsetTop - 120, "behavior": "smooth" });
-        } else {
-          pkmn.classList.add("inactive");
-          pkmn.classList.remove("active");
-          //document.querySelector(".pokerow").scrollTo({ "top": 0, "behavior": "smooth" });
-        }
+        document.querySelector(".pokerow").scrollTo({ "top": pkmn?.offsetTop - 120, "behavior": "smooth" });
         setSideBarOpen(isOpen);
       },
       reverse: rev
@@ -379,15 +361,25 @@ export default function Home() {
               let options = getGoeFooterOptions(format.formatedTypes);
               let footer = makeFooterAnimation(format?.formatedTypes, options, 0);
 
-              return <img
+              return <div
                 key={`${i}-${res?.name}-${res?.id}_thumb`}
-                src={res?.sprites[0].sprites.other.showdown.front_default}
-                width={40}
-                height={40}
-                alt={res?.name}
+                className={res?.name == selectedPokemon?.name ? "thumb-con active" : "thumb-con"}
+                style={{
+                  "--shadow-bg": format?.formatedTypes[0].color,
+                }}
                 onClick={(ev) =>
                   handleViewSidebar(res, options, footer)
-                } />
+                }
+                >
+                <img
+                  loading="lazy"
+                  src={res?.sprites[0].sprites.other.showdown.front_default}
+                  width={40}
+                  height={40}
+                  alt={res?.name}
+                   />
+                  <h5 className="thumb-id">#{res?.id}</h5>
+              </div>
             })
           }
         </Stack>

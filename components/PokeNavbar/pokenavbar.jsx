@@ -48,10 +48,10 @@ const PokeNavbar = ({
             className="d-inline-block align-top"
             alt="Pokemons"
           />{" "}
-          Pokemons
+          P0KDX
         </Navbar.Brand>
 
-        <Navbar.Brand href="/">{offset + " - " + count}</Navbar.Brand>
+        <Navbar.Brand href="/">{limit + " de " + count}</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
