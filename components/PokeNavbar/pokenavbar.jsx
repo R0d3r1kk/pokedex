@@ -14,8 +14,8 @@ import { getFilterIcons } from "../../helpers/Utils.jsx";
 
 const PokeNavbar = ({
   limit,
-  offset,
-  count,
+  offset = 0,
+  count = 0,
   filter,
   onFilterSelect,
   onLimitSelect,

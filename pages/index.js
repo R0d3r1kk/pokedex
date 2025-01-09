@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect, useCallback, Suspense } from "react";
 import { Row, CloseButton, Dropdown, Button, Stack, Collapse } from "react-bootstrap";
 import {
   getCardFormatByType,
@@ -12,7 +12,6 @@ import {
   PokeNavbar,
   PokeSideBar
 } from "../components";
-import { getPokemons, getPokemonCount } from "../helpers/GraphHelper.tsx";
 import toast, { Toaster, ToastBar } from "react-hot-toast";
 import db, { exportDB } from "../DB/database.config";
 import { useSpring, animated } from '@react-spring/web';
@@ -47,12 +46,8 @@ export default function Home() {
     //   fetchData().then((data) => populateData(data));
     // }
     setSideBarOpen(false);
-    getPokemonCount(0).then((json) => {
-      if (json)
-        setPokemonCount(json.count);
-      else
-        setPokemonCount(0);
-    });
+    setIsLoading(true);
+    fetchData().then((data) => populateData(data));
   }, []);
 
   useEffect(() => {
@@ -61,21 +56,6 @@ export default function Home() {
     }
   }, [q, limit, pokemonList, filterParam])
 
-  useEffect(() => {
-    if (pokemonCount) {
-      setIsLoading(true);
-      fetchData().then((data) => populateData(data));
-    }
-  }, [pokemonCount])
-
-  useEffect(() => {
-    if (pokemonCount) {
-      if (pokemonList.results.length < pokemonList.count) {
-        setIsLoading(true);
-        getGraphQlItems().then((data) => populateData(data));
-      }
-    }
-  }, [limit]);
 
   function _limit(arr, c) {
     return arr.filter((x, i) => {
@@ -115,25 +95,11 @@ export default function Home() {
       );
   };
 
-  const fetchJson = () => {
-    return fetch('./db.json')
-      .then(response => {
-        console.log(response);
-        return response.json();
-      }).catch((e) => {
-        console.log(e.message);
-      });
-  }
-
   const fetchData = async () => {
     return getLocalItems().then((res) => {
-      if (res.results.length <= 0) {
-        return getGraphQlItems();
-      }
-
       return res;
     }).catch((e) => {
-      return getGraphQlItems();
+      console.log(e);
     });
   };
 
@@ -143,6 +109,7 @@ export default function Home() {
       if (res.results <= 0) {
         throw "data null";
       }
+      storePokemonList(res);
       return res;
     }).catch((e) => {
       return db.pokemonlist
@@ -175,45 +142,16 @@ export default function Home() {
           return item;
         });
     });
-
-
-
-
   };
 
-  const getGraphQlItems = async () => {
-    return getPokemons({ limit: pokemonCount, offset: 0 }).then((res) => {
-      var response = {};
-      if (!res) return;
-
-      let list = res.data;
-      toast(
-        (t) => (
-          <span>
-            {list.results?.length} Rows retrieved{" "}
-          </span>
-        ),
-        {
-          id: "rows",
-          icon: <img src="/pokeball.svg" width={30} height={30} />,
-          position: "bottom-right",
-          duration: Infinity,
-        }
-      );
-      if (list && pokemonList) {
-        response = {
-          count: list.pagination.item.count,
-          results: [...pokemonList.results, ...list.results],
-        };
-      }
-
-      storePokemonList({
-        ...response,
-        date_created: Date().toLocaleString(),
+  const fetchJson = () => {
+    return fetch('./db.json')
+      .then(response => {
+        console.log(response);
+        return response.json();
+      }).catch((e) => {
+        console.log(e.message);
       });
-
-      return response;
-    });
   };
 
   const storePokemonList = async (obj) => {
@@ -405,54 +343,56 @@ export default function Home() {
         footer={curretnCardFooter}
         springs={{ x: sb_props.x }}
       />
+      <Suspense fallback={<PokeLoader />}>
+        <animated.div
+          className={sidebarOpen ? "row pokerow sbopen" : "row pokerow"}
+          id="style-12"
+          style={{
+            width: sb_props.width,
+            "--scrollbarbg": `${getScrollbarColor()}`
+          }}>
 
-      <animated.div
-        className={sidebarOpen ? "row pokerow sbopen" : "row pokerow"}
-        id="style-12"
-        style={{
-          width: sb_props.width,
-          "--scrollbarbg": `${getScrollbarColor()}`
-        }}>
-        {filteredPokemonList?.map((res, i) => {
-          return (
-            <PokeCard
-              isOpen={sidebarOpen}
-              key={`${i}-${res?.name}-${res?.id}`}
-              selected={selectedPokemon?.name}
-              pokemon={res}
-              onClick={handleViewSidebar}
-            />
-          );
-        })}
-      </animated.div>
-      <Stack
-        id="style-12"
-        className="thumbs"
-        direction="vertical"
-        gap={1}
-        style={{
-          "--scrollbarbg": `${getScrollbarColor()}`
-        }}>
-        {
-          filteredPokemonList?.map((res, i) => {
+          {filteredPokemonList?.map((res, i) => {
+            return (
+              <PokeCard
+                isOpen={sidebarOpen}
+                key={`${i}-${res?.name}-${res?.id}`}
+                selected={selectedPokemon?.name}
+                pokemon={res}
+                onClick={handleViewSidebar}
+              />
+            );
+          })}
+        </animated.div>
+        <Stack
+          id="style-12"
+          className="thumbs"
+          direction="vertical"
+          gap={1}
+          style={{
+            "--scrollbarbg": `${getScrollbarColor()}`
+          }}>
+          {
+            filteredPokemonList?.map((res, i) => {
 
-            const format = getCardFormatByType(res.types);
-            let options = getGoeFooterOptions(format.formatedTypes);
-            let footer = makeFooterAnimation(format?.formatedTypes, options, 0);
+              const format = getCardFormatByType(res.types);
+              let options = getGoeFooterOptions(format.formatedTypes);
+              let footer = makeFooterAnimation(format?.formatedTypes, options, 0);
 
-            return <img
-              key={`${i}-${res?.name}-${res?.id}_thumb`}
-              src={res?.sprites[0].sprites.other.showdown.front_default}
-              width={40}
-              height={40}
-              alt={res?.name}
-              onClick={(ev) =>
-                handleViewSidebar(res, options, footer)
-              } />
-          })
-        }
-      </Stack>
+              return <img
+                key={`${i}-${res?.name}-${res?.id}_thumb`}
+                src={res?.sprites[0].sprites.other.showdown.front_default}
+                width={40}
+                height={40}
+                alt={res?.name}
+                onClick={(ev) =>
+                  handleViewSidebar(res, options, footer)
+                } />
+            })
+          }
+        </Stack>
 
+      </Suspense>
       <Toaster>
         {(t) => (
           <ToastBar toast={t}>
