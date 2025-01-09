@@ -1,5 +1,5 @@
 import { useState, useEffect, Suspense } from "react";
-import { CloseButton, Button, Stack } from "react-bootstrap";
+import { Stack } from "react-bootstrap";
 import {
   getCardFormatByType,
   roman_to_Int,
@@ -11,18 +11,17 @@ import {
   PokeNavbar,
   PokeSideBar
 } from "../components";
-import toast, { Toaster, ToastBar } from "react-hot-toast";
-import db, { exportDB } from "../DB/database.config";
 import { useSpring, animated } from '@react-spring/web';
 import { Colors, getGoeFooterOptions, makeFooterAnimation } from "../helpers/Utils.jsx";
+import { isMobile } from 'react-device-detect';
+import db from "../DB/database.config";
 
-export default function Home() {
-  const [limit, setLimit] = useState(10);
-  const [obtainedPokemons, setObtainedPokemons] = useState(0);
+export default function Home(props) {
+  const [limit, setLimit] = useState(0);
   const [pokemonList, setPokemonList] = useState({
     results: [],
   });
-  const [pokemonCount, setPokemonCount] = useState();
+  const [obtainedPokemons, setObtainedPokemons] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [q, setQ] = useState("");
   const [searchParam] = useState(["name", "id"]);
@@ -43,10 +42,19 @@ export default function Home() {
     // if (!wasLastList) {
     //   setIsLoading(true);
     //   fetchData().then((data) => populateData(data));
-    // }
+    // }d
     setSideBarOpen(false);
     setIsLoading(true);
-    fetchData().then((data) => populateData(data));
+    if (props) {
+      setLimit(props.limit);
+      setObtainedPokemons(props.offset);
+      getLocalItems().then((data) => {
+        setPokemonList(data);
+        setIsLoading(false);
+      }).catch((e) => {
+        setIsLoading(false);
+      });
+    }
   }, []);
 
   useEffect(() => {
@@ -55,117 +63,21 @@ export default function Home() {
     }
   }, [q, limit, pokemonList, filterParam])
 
+  const getLocalItems = async () => {
+    return db.pokemonlist
+      .where("id")
+      .equals(0)
+      .first()
+      .then((item) => {
+        return item;
+      });
+  };
 
   function _limit(arr, c) {
     return arr.filter((x, i) => {
       if (i <= (c - 1)) { return true }
     })
   }
-
-  const populateData = (data) => {
-    setIsLoading(false);
-    if (!data) return;
-    setObtainedPokemons(parseInt(data.results?.length));
-    setPokemonList(data);
-
-    console.log("data", data);
-
-    if (data.count < pokemonCount)
-      toast(
-        (t) => (
-          <span>
-            Get More <>Pokemons</>{" "}
-            <a
-              className="toastrefresh"
-              onClick={() => {
-                toast.dismiss("refresh");
-              }}
-            >
-              Refresh
-            </a>
-          </span>
-        ),
-        {
-          id: "refresh",
-          icon: <img src="/pokeball.svg" width={30} height={30} />,
-          position: "bottom-left",
-          duration: Infinity,
-        }
-      );
-  };
-
-  const fetchData = async () => {
-    return getLocalItems().then((res) => {
-      return res;
-    }).catch((e) => {
-      console.log(e);
-    });
-  };
-
-  const getLocalItems = async () => {
-
-    return fetchJson().then((res) => {
-      if (res.results <= 0) {
-        throw "data null";
-      }
-      setPokemonCount(res.data.count);
-      storePokemonList(res.data);
-      return res.data;
-    }).catch((e) => {
-      return db.pokemonlist
-        .where("id")
-        .equals(0)
-        .first()
-        .then((item) => {
-          toast(
-            (t) => (
-              <Stack direction="horizontal" gap={3}>
-                {item.results?.length} Rows retrieved from dexie
-                <Button variant="success" onClick={() => {
-                  console.log("exporting db");
-                  if (pokemonList.count > 0) {
-                    setIsLoading(true);
-                    exportDB(pokemonList);
-                    setIsLoading(false);
-                  }
-                }} >export</Button>
-              </Stack>
-
-            ),
-            {
-              id: "rows",
-              icon: <img src="/pokeball.svg" width={30} height={30} />,
-              position: "bottom-right",
-              duration: Infinity,
-            }
-          );
-          return item;
-        });
-    });
-  };
-
-  const fetchJson = () => {
-    return fetch('./db.json')
-      .then(response => {
-        console.log(response);
-        return response.json();
-      }).catch((e) => {
-        console.log(e.message);
-      });
-  };
-
-  const storePokemonList = async (obj) => {
-    const pkl = {
-      id: 0,
-      count: obj?.count || 0,
-      limit: limit,
-      results: obj?.results || [],
-      date_created: Date().toLocaleString(),
-    };
-
-    const id = await db.pokemonlist.put(pkl);
-    console.info(`Rows Stored : ${pkl.results.length} rows - id ${id}`);
-  };
 
   const handleSelect = (e) => {
     setLimit(parseInt(e));
@@ -299,11 +211,13 @@ export default function Home() {
     openPokeDetail(pokemon, false, true);
   };
 
+  if (isMobile) return <div className="pokecon"></div>;
 
   return (
     <div className="pokecon">
+
       <PokeNavbar
-        count={pokemonList.count}
+        count={props.count}
         offset={obtainedPokemons}
         limit={limit}
         onLimitSelect={(ev) => handleSelect(ev)}
@@ -314,7 +228,6 @@ export default function Home() {
           setQ("");
         }}
       />
-
       {isLoading && <PokeLoader />}
 
       <PokeSideBar
@@ -370,38 +283,22 @@ export default function Home() {
                 onClick={(ev) =>
                   handleViewSidebar(res, options, footer)
                 }
-                >
+              >
                 <img
                   loading="lazy"
                   src={res?.sprites[0].sprites.other.showdown.front_default}
                   width={40}
                   height={40}
                   alt={res?.name}
-                   />
-                  <h5 className="thumb-id">#{res?.id}</h5>
+                />
+                <h5 className="thumb-id">#{res?.id}</h5>
               </div>
             })
           }
         </Stack>
 
       </Suspense>
-      <Toaster>
-        {(t) => (
-          <ToastBar toast={t}>
-            {({ icon, message }) => (
-              <>
-                {icon}
-                {message}
-                {t.type !== "loading" && t.type != "blank" && (
-                  <CloseButton
-                    onClick={() => toast.dismiss(t.id)}
-                  ></CloseButton>
-                )}
-              </>
-            )}
-          </ToastBar>
-        )}
-      </Toaster>
+
     </div>
   );
 }

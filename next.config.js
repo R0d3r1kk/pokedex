@@ -13,12 +13,13 @@ module.exports = {
         issuer: { and: [/\.(js|ts|md)x?$/] },
         use: ["@svgr/webpack"],
       });
+
       return config;
     }
 
     if (!isServer) {
       config.resolve.fallback = {
-        fs: false,
+        fs: false, path: false, stream: false, constants: false
       };
     }
 
