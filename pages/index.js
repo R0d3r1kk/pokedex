@@ -1,4 +1,3 @@
-import Head from "next/head";
 import { useRef, useState, useEffect, useCallback } from "react";
 import { Row, CloseButton, Dropdown, Button, Stack, Collapse } from "react-bootstrap";
 import {
@@ -383,19 +382,6 @@ export default function Home() {
 
   return (
     <div className="pokecon">
-      <Head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="" />
-        <title>Pokedex</title>
-        <link rel="icon" href="./pokeball.svg" />
-        <link
-          rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
-          integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
-          crossOrigin="anonymous"
-        />
-      </Head>
       <PokeNavbar
         count={pokemonList.count}
         offset={obtainedPokemons}

@@ -47,6 +47,8 @@ body {
 .thumbs {
 	overflow-y: auto;
 	overflow-x: hidden;
+	display: flex;
+	align-items: center;
 	width: 70px !important;
 	height: 90vh;
 	position: fixed;

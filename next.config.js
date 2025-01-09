@@ -29,9 +29,5 @@ module.exports = {
         "react-dom": "ReactDOM",
       },
     };
-  },
-  resolve: {
-    // you can now require('file') instead of require('file.js')
-    extensions: ['', '.js', '.json']
   }
 };

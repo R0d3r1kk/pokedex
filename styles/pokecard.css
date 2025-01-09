@@ -9,15 +9,14 @@
   background-size: cover;
   border-radius: 20px !important;
   /* box-shadow: 0.1rem 0.1rem 1rem #000; */
-  color: #fff;
+  color: #fff !important;
   transition: 0.4s ease-out;
   position: relative;
   margin: 0.5rem;
   left: 0;
   overflow: hidden;
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.1) !important;
-  border: 1px solid rgba(0, 0, 0, 0) !important;
+  background: rgba(80, 80, 80, 0.1) !important;
   transition: 0.4s ease-out;
 }
 
