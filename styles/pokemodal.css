@@ -1,3 +1,14 @@
+.modal{
+  padding: 0 !important;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-dialog{
+  width: 97% !important;
+}
+
 .modal-title{
     z-index: 2;
 }
@@ -81,8 +92,9 @@
     background-size: contain;
     background-position: 50%;    
     border-radius: 10px;
-    width: 200px;
-    height: 200px;
+    width: 400px;
+    height: 400px;
+    bottom: 50px;
     position: relative;
     transform: translateY(100px);
     z-index: 3;
@@ -95,8 +107,8 @@
     content: "";
     height: 20px;
     position: absolute;
-    width: 90%;
-    bottom: -10px;
+    width: 50%;
+    bottom: 20px;
     right: 50%;
     transform: translateX(50%);
     z-index: 0;

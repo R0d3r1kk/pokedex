@@ -3,33 +3,31 @@
   display: grid;
   grid-template-rows: 1fr 10rem auto;
   grid-template-areas: "main" "." "footer";
-  height: 320px !important;
-  width: 260px !important;
+  height: 380px !important;
+  width: 280px !important;
   /* background-color: #212529 !important; */
   background-size: cover;
   border-radius: 20px !important;
   /* box-shadow: 0.1rem 0.1rem 1rem #000; */
-  color: #fff;
+  color: #fff !important;
   transition: 0.4s ease-out;
   position: relative;
   margin: 0.5rem;
   left: 0;
   overflow: hidden;
   cursor: pointer;
-  background: rgba(0, 0, 0, 0.6) !important;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 1);
-  backdrop-filter: blur(10.6px);
-  -webkit-backdrop-filter: blur(10.6px);
-  border: 1px solid rgba(0, 0, 0, 0) !important;
+  background: rgba(80, 80, 80, 0.1) !important;
   transition: 0.4s ease-out;
+  padding: 1em;
 }
+
 .pokecard:after {
   content: "";
   background-image: url(https://icon-library.com/images/pokemon-desktop-icon/pokemon-desktop-icon-23.jpg);
   background-repeat: no-repeat;
   background-size: 10em;
   filter: brightness(0%);
-  opacity: 0.2;
+  opacity: 0.5;
   position: absolute;
   transition: 0.4s ease-out;
   height: 10em;
@@ -38,13 +36,67 @@
   bottom: 5em;
   z-index: 0;
 }
-.pokecard:hover {
-  transition: 0.4s ease-out;
+
+.card.active {
+  /* pointer-events: none; */
+  box-shadow: 0 0px 10px var(--shadow-bg);
+  filter: brightness(100%);
+  
+  transition: all 0.2s ease-in-out;
 }
+
+.card.inactive .img-wrapper img {
+  filter: brightness(0);
+  transition: all 0.2s ease-in-out;
+}
+
+/* .card.active::after {
+  width: 0px;
+  opacity: 0.7;
+  transition: 0.2s ease-in-out;
+} */
+
+.card.active .card-header {
+  font-size: 23px;
+  transition: all 0.2s ease-in-out;
+}
+
+.card.active .card-body {
+  transform: translateY(-15px);
+  transition: all 0.2s ease-in-out;
+}
+
+.card.inactive {
+  filter: brightness(100%);
+  transition: all 0.2s ease-in-out;
+}
+
+.sbopen .card.inactive {
+  filter: brightness(60%);
+  transition: all 0.2s ease-in-out;
+}
+
+/* .sbopen .card.inactive .img-wrapper img{
+  filter: brightness(0%);
+  transition: all 0.2s ease-in-out;
+} */
+
+.pokecard:hover {
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 0px 10px var(--shadow-bg);
+  filter: brightness(100%);
+  
+}
+
+.pokecard:hover .img-wrapper img {
+  filter: brightness(100%);
+  transition: all .5s ease-in-out;
+}
+
 .pokecard:hover::after {
   width: 0px;
   opacity: 0.7;
-  transition: 0.4s ease-out;
+  transition: all 0.2s ease-in-out;
 }
 
 .pokecard:hover .card-header {
@@ -56,15 +108,17 @@
   width: 100%;
   z-index: 2;
 }
+
 .pokecard .img-wrapper img {
   width: 100%;
   z-index: 2;
 }
+
 .pokecard .card-header {
   border: none;
   display: flex;
-  justify-content: space-between;
-  transition: 0.4s ease-out;
+  justify-content: flex-end;
+  transition: 0.4s ease-in-out;
   border-radius: 20px !important;
   z-index: 1;
 }
@@ -72,37 +126,61 @@
 .pokecard .card-body {
   z-index: 2;
 }
-.pokecard:hover .content {
-  transform: translateY(40px);
+
+.pokecard:hover .card-body {
+  transform: translateY(-15px);
 }
+
 .pokecard .card-header .badge {
   display: flex;
   justify-content: center;
   align-items: center;
+  transform: translateX(18px);
+  border-radius: 5px 10px 5px 5px;
+  text-shadow: 2px 1px 2px rgba(0,0,0,0.8);
 }
-.pokecard .content {
-  min-height: 25%;
-  background-color: rgba(0, 0, 0, 0.2);
-  padding: 1.2rem 1rem 0 1.5rem;
-  border-radius: 20px;
-  transform: translateY(-50px);
-  transition: 0.4s ease-out;
-  z-index: 1;
-  justify-content: space-between;
+
+.pokecard .card-body {
+  transition: 0.4s ease-in-out;
+  z-index: 3;
+}
+
+.pokecard .card-body .hstack {
+  height: 30px;
+}
+
+
+.pokecard .card-body .icon {
+  border-radius: 100%;
+  height: 23px;
+  width: 23px;
+  transition: all 100ms ease-in-out;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
-.pokecard .content .pokecolor {
-  font-size: 10pt;
-  font-weight: bold;
-  font-style: italic;
+.pokecard .card-body .icon:hover {
+  transform: scale(1.2);
 }
 
+.pokecard .card-body svg:hover {
+  filter: saturate(200%);
+  transform: scale(1.2);
+}
+
+.pokecard .card-body svg {
+  transition: all 200ms ease-in-out;
+  height: 60%;
+  width: 60%;
+  margin: 0;
+}
 .water:hover {
   background-position: 33% 200% !important;
   background-size: 130% !important;
   background-repeat: no-repeat !important;
-  background-image: url("../assets/svg/water.svg") !important;
+  /* background-image: url("../assets/svg/water.svg") !important; */
   z-index: 1;
 }
 
@@ -110,14 +188,14 @@
   background-position: -50% !important;
   background-size: contain !important;
   background-repeat: no-repeat !important;
-  background-image: url("../assets/svg/fire.svg") !important;
+  /* background-image: url("../assets/svg/fire.svg") !important; */
   z-index: 1;
 }
 
 .grass:hover {
   background-position: 10% !important;
   background-size: 200% !important;
-  background-image: url("../assets/svg/grass.svg") !important;
+  /* background-image: url("../assets/svg/grass.svg") !important; */
   z-index: 1;
 }
 
@@ -125,31 +203,31 @@
   background-position: -20% !important;
   background-size: 120% !important;
   background-repeat: no-repeat !important;
-  background-image: url("../assets/svg/ray1.png") !important;
+  /* background-image: url("../assets/svg/ray1.png") !important; */
 }
 
 .poison:hover {
   background-position: 10% !important;
   background-size: 50% !important;
-  background-image: url("../assets/svg/posion.svg") !important;
+  /* background-image: url("../assets/svg/posion.svg") !important; */
   z-index: 0;
 }
 
 .ground:hover {
   background-position: 10% !important;
   background-size: 200% !important;
-  background-image: url("../assets/svg/ground.svg") !important;
+  /* background-image: url("../assets/svg/ground.svg") !important; */
   z-index: 0;
 }
 
 .fairy:hover {
-  background-image: url("../assets/svg/fairy.svg") !important;
+  /* background-image: url("../assets/svg/fairy.svg") !important; */
   z-index: 0;
 }
 
 .psychic:hover {
   background-size: 150% !important;
-  background-image: url("../assets/svg/psychic.svg") !important;
+  /* background-image: url("../assets/svg/psychic.svg") !important; */
   background-repeat: no-repeat !important;
   z-index: 0;
 }
@@ -157,12 +235,12 @@
 .rock:hover {
   background-position: 40% 40% !important;
   background-size: cover !important;
-  background-image: url("../assets/svg/rock.svg") !important;
+  /* background-image: url("../assets/svg/rock.svg") !important; */
   z-index: 0;
 }
 
 .ghost:hover {
-  background-image: url("../assets/svg/ghosts.svg") !important;
+  /* background-image: url("../assets/svg/ghosts.svg") !important; */
   z-index: 0;
 }
 
@@ -170,7 +248,7 @@
   background-position: 37% 90% !important;
   background-size: 150% !important;
   background-repeat: no-repeat !important;
-  background-image: url("../assets/svg/pows.png") !important;
+  /* background-image: url("../assets/svg/pows.png") !important; */
   z-index: 0;
 }
 
@@ -178,7 +256,7 @@
   background-position: 0% 50% !important;
   background-size: 100% !important;
   background-repeat: no-repeat !important;
-  background-image: url("../assets/svg/normal.png") !important;
+  /* background-image: url("../assets/svg/normal.png") !important; */
   z-index: 0;
 }
 
@@ -186,7 +264,7 @@
   background-repeat: no-repeat !important;
   background-position: -150% -150% !important;
   background-size: 90% !important;
-  background-image: url("../assets/svg/ice2.png") !important;
+  /* background-image: url("../assets/svg/ice2.png") !important; */
   z-index: 0;
 }
 
@@ -202,7 +280,7 @@
   background-position: 70% 50% !important;
   background-size: 200% !important;
   background-repeat: no-repeat !important;
-  background-image: url("../assets/svg/dark.svg") !important;
+  /* background-image: url("../assets/svg/dark.svg") !important; */
   z-index: 0;
 }
 

@@ -1,145 +1,45 @@
-import { Card, Badge } from "react-bootstrap";
+import { Card, Badge, Stack } from "react-bootstrap";
 import {
   getCardFormatByType,
   capitalizeFirstLetter,
 } from "../../helpers/Functions";
-import { useEffect, useState } from "react";
-import propTypes from "prop-types";
-import PokeModal from "../PokeModal/pokemodal";
-import GoeFooter from "../anim/GoeFooter/goefooter";
-import { Colors } from "../../helpers/Utils";
-import {
-  GoeFilter,
-  GhostFilter,
-  WaterFilter,
-  PsychicFilter,
-  GroundFilter,
-  PoisonFilter,
-  NormalFilter,
-  BugFilter,
-  DarkFilter,
-  RockFilter,
-} from "../../assets/svg/filters";
-import { Pokeapi } from "../../helpers/Utils";
+import { useEffect, useRef, useState } from "react";
+import { Colors, getGoeFooterOptions, makeFooterAnimation } from "../../helpers/Utils";
 
-const PokeCard = ({ pokemon, modalshowevent }) => {
+import { PokeUrl } from "../../helpers/Utils";
+
+const PokeCard = ({ isOpen, pokemon, selected, onClick }) => {
   const { id, name, sprites, types, species } = pokemon;
-  const [modalShow, setModalShow] = useState(false);
   const [animOptions, setAnimOptions] = useState();
+  const [cardFooter, setCardFooter] = useState();
   const [cardFormat, setCardFormat] = useState({
     formatedTypes: [
       {
+        name: "",
+        type: null,
         color: "#000",
       },
     ],
   });
+  const cardRef = useRef(null);
 
   useEffect(() => {
     if (types) {
       const format = getCardFormatByType(types);
+
       setCardFormat(format);
       if (animOptions === undefined) {
-        const ftypes = format.formatedTypes;
-        getOptions(ftypes);
+        getOptions(format.formatedTypes);
       }
     }
-  }, [pokemon, animOptions]);
+  }, [pokemon]);
 
   const getOptions = (ftypes) => {
-    const _type = ftypes[0].name;
-    const options = {
-      bubbles: 100,
-      bubblecolors: [...ftypes.map((item) => Colors[item.name])],
-      size: 4,
-      distance: 20,
-      position: 106,
-      time: 4,
-      delay: 0,
-      filter: { type: _type },
-    };
-
-    switch (_type) {
-      case "normal":
-        options.size = 6;
-        options.filter.svg = <NormalFilter />;
-        break;
-      case "fire":
-        options.size = 6;
-        options.filter.height = "1rem";
-        options.filter.type = "goe";
-        options.filter.svg = <GoeFilter />;
-        break;
-      case "water":
-        options.bubblecolors.push("#fff");
-        options.filter.svg = <WaterFilter />;
-        break;
-      case "grass":
-        options;
-        options.filter.svg = <></>;
-        break;
-      case "electric":
-        options.bubbles = 20;
-        options.distance = 25;
-        options.filter.svg = <></>;
-        break;
-      case "bug":
-        options.size = 6;
-        options.opacity = "1";
-        options.filter.svg = <BugFilter />;
-        break;
-      case "ground":
-        options.size = 9;
-        options.distance = 25;
-        options.filter.svg = <GroundFilter />;
-        break;
-      case "rock":
-        options.size = 9;
-        options.distance = 25;
-        options.filter.svg = <RockFilter />;
-        break;
-      case "poison":
-        options.size = 5;
-        options.opacity = "0.5";
-        options.filter.svg = <PoisonFilter />;
-        break;
-      case "psychic":
-        options.size = 5;
-        options.opacity = "1";
-        options.distance = 25;
-        options.filter.svg = <PsychicFilter />;
-        break;
-      case "ghost":
-        options.size = 5;
-        options.opacity = "1";
-        options.distance = 25;
-        options.filter.svg = <GhostFilter />;
-        break;
-      case "dark":
-        options.size = 5;
-        options.opacity = "1";
-        options.distance = 25;
-        options.filter.svg = <DarkFilter />;
-        break;
-    }
-
+    
+    let options = getGoeFooterOptions(ftypes);
     setAnimOptions(options);
-  };
-
-  const makeAnimation = (types, options, i) => {
-    return (
-      <GoeFooter
-        key={i}
-        bubbles={options.bubbles}
-        bubblecolors={options.bubblecolors}
-        size={options.size}
-        distance={options.distance}
-        position={options.position}
-        time={options.time}
-        delay={options.dealy}
-        filter={options.filter}
-        opacity={options.opacity}
-      />
-    );
+    let footer = makeFooterAnimation(cardFormat?.formatedTypes, options, 0);
+    setCardFooter(footer);
   };
 
   const formatForModal = () => {
@@ -157,73 +57,58 @@ const PokeCard = ({ pokemon, modalshowevent }) => {
     return (
       <Card
         key={id}
-        className={"pokecard " + cardFormat?.style?.className || ""}
-        onClick={() => {
-          setModalShow(true);
-          modalshowevent(true);
+        ref={cardRef}
+        id={name}
+        className={pokemon.name == selected ? "pokecard active " + cardFormat?.style?.className : "pokecard inactive " + cardFormat?.style?.className}
+        style={{
+          "--shadow-bg":cardFormat?.formatedTypes[0].color
+        }}
+        onClick={(ev) => {
+          ev.preventDefault();
+          onClick(pokemon, animOptions, cardFooter)
         }}
       >
         <Card.Header>
-          {capitalizeFirstLetter(name)}
-          <Badge bg="danger">{"#" + id}</Badge>
+          {/* <Badge bg="" style={{ backgroundColor: species.color.name || "light" }}>{"#" + id}</Badge> */}
         </Card.Header>
         <div className="img-wrapper">
-          <Card.Img variant="top" src={Pokeapi.getPokemonImg(id)} />
+          <Card.Img variant="top" src={PokeUrl.getUrl("Shivam", id, ".png")} />
         </div>
         <Card.Body>
-          <Card.Title></Card.Title>
-          <Card.Subtitle className="mb-2 text-muted"></Card.Subtitle>
-        </Card.Body>
-        <div className="content">
-          <div>
-            {cardFormat?.formatedTypes?.map((poketype) => {
+          <Card.Title>{capitalizeFirstLetter(name)}</Card.Title>
+          <Card.Subtitle className="mb-2 text-muted">
+          <Stack direction="horizontal" gap={1}>
+            {cardFormat?.formatedTypes?.map((poketype, idx) => {
               return (
-                <Badge
-                  key={name + "_" + poketype?.name + "_" + poketype.type}
-                  bg="none"
-                  style={{ backgroundColor: poketype?.color || "light" }}
-                >
-                  {poketype?.name}
-                </Badge>
+                <div
+                  key={poketype.name + "_" + idx}
+                  className="icon"
+                  style={{
+                    backgroundColor: poketype?.color || "light",
+                    boxShadow: "0 0 5px " + poketype?.color
+                  }}>
+                  {poketype.type_icon && <poketype.type_icon />}
+                </div>
               );
             })}
-          </div>
-          <div className="pokecolor" style={{ color: species.color.name }}>
-            {species.color.name}
-          </div>
-        </div>
+          </Stack>
+          </Card.Subtitle>
+        </Card.Body>
         {animOptions &&
-          makeAnimation(cardFormat?.formatedTypes, animOptions, 0)}
+          cardFooter}
       </Card>
     );
   };
 
-  return (
-    <>
-      <PkCard />
-      {animOptions && (
-        <PokeModal
-          show={modalShow}
-          fullscreen={true}
-          onHide={() => {
-            //getOptions(cardFormat?.formatedTypes);
-            setModalShow(false);
-            modalshowevent(false);
-          }}
-          pokemon={pokemon}
-          animoptions={modalShow ? formatForModal(animOptions) : animOptions}
-        />
-      )}
-    </>
-  );
+  return <PkCard />;
 };
 
-PokeCard.propTypes = {
-  pokemon: propTypes.object.isRequired,
-  modalshowevent: propTypes.func,
-};
+// PokeCard.propTypes = {
+//   pokemon: propTypes.object.isRequired,
+//   modalshowevent: propTypes.func,
+// };
 
-PokeCard.defaultProps = {
-  pokemon: {},
-};
+// PokeCard.defaultProps = {
+//   pokemon: {},
+// };
 export default PokeCard;

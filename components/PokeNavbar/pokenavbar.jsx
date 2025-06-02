@@ -6,14 +6,16 @@ import {
   Dropdown,
   Container,
   Form,
+  Stack,
+  Collapse
 } from "react-bootstrap";
 import propTypes from "prop-types";
-import debounce from "lodash.debounce";
+import { getFilterIcons } from "../../helpers/Utils.jsx";
 
 const PokeNavbar = ({
   limit,
-  offset,
-  count,
+  offset = 0,
+  count = 0,
   filter,
   onFilterSelect,
   onLimitSelect,
@@ -36,7 +38,7 @@ const PokeNavbar = ({
   }, [search]);
 
   return (
-    <Navbar fixed="top" bg="dark" variant="dark" expand="lg">
+    <Navbar fixed="top" bg="" style={{backgroundColor: 'rgba(0,0,0,1)'}} variant="dark" expand="lg">
       <Container fluid>
         <Navbar.Brand href="/">
           <img
@@ -46,10 +48,10 @@ const PokeNavbar = ({
             className="d-inline-block align-top"
             alt="Pokemons"
           />{" "}
-          Pokemons
+          P0KDX
         </Navbar.Brand>
 
-        <Navbar.Brand href="/">{offset + " - " + count}</Navbar.Brand>
+        <Navbar.Brand href="/">{limit + " de " + count}</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
@@ -60,10 +62,13 @@ const PokeNavbar = ({
               onSelect={onLimitSelect}
             >
               <Dropdown.Item eventKey="10">10</Dropdown.Item>
-              <Dropdown.Item eventKey="30">30</Dropdown.Item>
               <Dropdown.Item eventKey="50">50</Dropdown.Item>
               <Dropdown.Item eventKey="100">100</Dropdown.Item>
+              <Dropdown.Item eventKey="300">300</Dropdown.Item>
               <Dropdown.Item eventKey="500">500</Dropdown.Item>
+              <Dropdown.Item eventKey="800">800</Dropdown.Item>
+              <Dropdown.Item eventKey="1000">1000</Dropdown.Item>
+              <Dropdown.Item eventKey={count}>{count}</Dropdown.Item>
             </NavDropdown>
             <NavDropdown
               title={"Filter " + filter}
@@ -77,16 +82,52 @@ const PokeNavbar = ({
               <Dropdown.Item eventKey="Version">By Version</Dropdown.Item>
               <Dropdown.Item eventKey="Color">By Color</Dropdown.Item>
             </NavDropdown>
+            <Collapse in={filter === "Type"} >
+              <Stack className="type_filter" direction="horizontal" gap={1}>
+                {getFilterIcons().map((f, idx) => {
+                  return <div
+                    key={f.type_name + "_" + idx}
+                    className="icon"
+                    style={{ 
+                      backgroundColor: f?.type_color || "light",
+                      boxShadow: "0 0 5px " + f?.type_color
+                    }}
+                    onClick={(ev) => {
+                      onFilterSelect("Type");
+                      onSearchChange(f.type_name);
+                    }}>
+                    {f.type_icon &&
+                      <f.type_icon onClick={(ev) => {
+                        onFilterSelect("Type");
+                        onSearchChange(f.type_name);
+                      }} />}
+                  </div>
+                })}
+              </Stack>
+            </Collapse>
           </Nav>
           <Form className="d-flex">
-            <Form.Control
-              type="search"
-              placeholder="Search"
-              className="me-2"
-              aria-label="Search"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+            <Stack direction="horizontal" gap={3}>
+              {/* <Form.Range name="limit" min={10} max={count} value={limit} onChange={(ev) => {
+                onLimitSelect(ev.target.value);
+              }
+              } /> */}
+
+              <Form.Control
+                type="number"
+                max={count}
+                value={limit}
+                onChange={(ev) => onLimitSelect(ev.target.value)}
+              />
+              <Form.Control
+                type="search"
+                placeholder="Search"
+                className="me-2"
+                aria-label="Search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </Stack>
           </Form>
         </Navbar.Collapse>
       </Container>

@@ -1,4 +1,4 @@
-import { Colors } from "./Utils";
+import { Colors, TypeIcons } from "./Utils";
 export const getCardFormatByType = (types) => {
   let style = {};
   let formatedTypes = [];
@@ -8,108 +8,126 @@ export const getCardFormatByType = (types) => {
       case "fire":
         formatedTypes.push({
           name: "fire",
+          type_icon: TypeIcons.fire,
           color: Colors.fire,
         });
         break;
       case "grass":
         formatedTypes.push({
           name: "grass",
+          type_icon: TypeIcons.grass,
           color: Colors.grass,
         });
         break;
       case "electric":
         formatedTypes.push({
           name: "electric",
+          type_icon: TypeIcons.electric,
           color: Colors.electric,
         });
         break;
       case "water":
         formatedTypes.push({
           name: "water",
+          type_icon: TypeIcons.water,
           color: Colors.water,
         });
         break;
       case "ground":
         formatedTypes.push({
           name: "ground",
+          type_icon: TypeIcons.ground,
           color: Colors.ground,
         });
         break;
       case "rock":
         formatedTypes.push({
           name: "rock",
+          type_icon: TypeIcons.rock,
           color: Colors.rock,
         });
         break;
       case "poison":
         formatedTypes.push({
           name: "poison",
+          type_icon: TypeIcons.poison,
           color: Colors.poison,
         });
         break;
       case "bug":
         formatedTypes.push({
           name: "bug",
+          type_icon: TypeIcons.bug,
           color: Colors.bug,
         });
         break;
       case "dragon":
         formatedTypes.push({
           name: "dragon",
+          type_icon: TypeIcons.dragon,
           color: Colors.dragon,
         });
         break;
       case "psychic":
         formatedTypes.push({
           name: "psychic",
+          type_icon: TypeIcons.psychic,
           color: Colors.psychic,
         });
         break;
       case "flying":
         formatedTypes.push({
           name: "flying",
+          type_icon: TypeIcons.flying,
           color: Colors.flying,
         });
         break;
       case "fighting":
         formatedTypes.push({
           name: "fighting",
+          type_icon: TypeIcons.fighting,
           color: Colors.fighting,
         });
         break;
       case "normal":
         formatedTypes.push({
           name: "normal",
+          type_icon: TypeIcons.normal,
           color: Colors.normal,
         });
         break;
       case "fairy":
         formatedTypes.push({
           name: "fairy",
+          type_icon: TypeIcons.fairy,
           color: Colors.fairy,
         });
         break;
       case "ghost":
         formatedTypes.push({
           name: "ghost",
+          type_icon: TypeIcons.ghost,
           color: Colors.ghost,
         });
         break;
       case "ice":
         formatedTypes.push({
           name: "ice",
+          type_icon: TypeIcons.ice,
           color: Colors.ice,
         });
         break;
       case "steel":
         formatedTypes.push({
           name: "steel",
+          type_icon: TypeIcons.steel,
           color: Colors.steel,
         });
         break;
       case "dark":
         formatedTypes.push({
           name: "dark",
+          type_icon: TypeIcons.dark,
           color: Colors.dark,
         });
         break;

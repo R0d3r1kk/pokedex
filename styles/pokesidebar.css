@@ -1,0 +1,136 @@
+.sidebar {
+    position: absolute;
+    top: 4em;
+    left: 1em;
+    height: 92%;
+    width: 70vw;
+    border-radius: 16px;
+    background-color: rgba(0, 0, 0, 0.1);
+    transition: all 0s ease-in-out;
+}
+.pokerow{
+    transition: all 0.1s ease-in;
+}
+/* .sidebar:after {
+    content: "";
+    background: rgba( 0, 0, 0, 0.3 );
+    backdrop-filter: blur( 3px );
+    -webkit-backdrop-filter: blur( 3px );
+    border-radius: 10px;
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
+    position: absolute;
+    width: 70%;
+    min-height: 99%;
+    left: 5em;
+    z-index: 0;
+} */
+
+.sidebar::before{
+    content: "";
+    position: absolute;
+    transition: 0.4s ease-out;
+    background-image: url('../assets/img/pokebal._detail.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: 40% 50%;
+    opacity: 1;
+    width: 100%;
+    min-height: 100%;
+    filter: url(#svgGradientMap);
+    z-index: 0;
+}
+
+.sidebar .btn-close{
+    position: absolute;
+    top: 1em;
+
+    right: 20%;
+    z-index: 3;
+}
+
+.sidebar .goefooter {
+    z-index: 3;
+    background-color: transparent;
+    display: grid;
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    grid-area: footer;
+    min-height: 97%;
+    /* opacity: 0.6; */
+}
+
+
+.sidebar.open .goefooter .bubbles {
+    position: absolute;
+    bottom: -35px;
+    left: -11px;
+    right: -11px;
+    background: var(--footer-background);
+    /* filter: url("#goefilter_svg__blob"); */
+    
+    transition: all 0s ease-in-out;
+    z-index: 0;
+}
+
+.sidebar.open .goefooter .bubbles .bubble {
+    position: absolute;
+    left: var(--position, 50%);
+    background: var(--footer-bubble-background);
+    border-radius: 100%;
+    -webkit-animation: bubble-size var(--time, 4s) ease-in infinite var(--delay, 0s),
+        bubble-move var(--time, 4s) ease-in infinite var(--delay, 0s);
+    animation: bubble-size var(--time, 4s) ease-in infinite var(--delay, 0s),
+        bubble-move var(--time, 4s) ease-in infinite var(--delay, 0s);
+    transform: translate(-50%, 100%);
+}
+
+
+@-webkit-keyframes bubble-size {
+
+    0%,
+    75% {
+        width: var(--size, 4rem);
+        height: var(--size, 4rem);
+    }
+
+    100% {
+        width: 0rem;
+        height: 0rem;
+    }
+}
+
+@keyframes bubble-size {
+
+    0%,
+    75% {
+        width: var(--size, 4rem);
+        height: var(--size, 4rem);
+    }
+
+    100% {
+        width: 0rem;
+        height: 0rem;
+    }
+}
+
+@-webkit-keyframes bubble-move {
+    0% {
+        bottom: -4rem;
+    }
+
+    100% {
+        bottom: var(--distance, 10rem);
+    }
+}
+
+@keyframes bubble-move {
+    0% {
+        bottom: -4rem;
+    }
+
+    100% {
+        bottom: var(--distance, 10rem);
+    }
+}
