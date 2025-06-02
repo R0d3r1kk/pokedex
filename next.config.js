@@ -1,35 +1,30 @@
 // this goes into next.config.js
+const webpack = require("webpack");
 const isDev = process.env.POKE_ENV === 'development'
 
-module.exports = {
+const nextConfig =  {
+  output: 'export',
   reactStrictMode: true,
+  transpilePackages: ['three'],
   env: {
     POKE_ENV: process.env.POKE_ENV,
   },
   webpack: (config, { isServer }) => {
-    if (isDev) {
-      config.module.rules.push({
-        test: /\.svg$/,
-        issuer: { and: [/\.(js|ts|md)x?$/] },
-        use: ["@svgr/webpack"],
-      });
+    config.plugins.push(new webpack.DefinePlugin(process.env));
 
-      return config;
-    }
+    config.module.rules.push({
+      test: /\.svg$/,
+      issuer: { and: [/\.(js|ts|md)x?$/] },
+      use: ["@svgr/webpack"],
+    });
 
-    if (!isServer) {
-      config.resolve.fallback = {
-        fs: false, path: false, stream: false, constants: false
-      };
-    }
+    config.module.rules.push({
+      test: /\.(glsl|vs|fs|frag|vert)$/,
+      exclude: '/node_modules',
+      use: ["raw-loader", "glslify-loader"],
+    });
 
-    return {
-      ...config,
-      externals: {
-        react: "React",
-        "react-dom": "ReactDOM",
-      },
-    };
+    return config;
   },
   images: {
     remotePatterns: [
@@ -43,3 +38,5 @@ module.exports = {
     ],
   },
 };
+
+module.exports = nextConfig;
